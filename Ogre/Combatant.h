@@ -20,6 +20,7 @@ public:
 	int Attack( CCombatant *pVictim );
 	int TakeDamage( int iDamage );
 
+	std::string GetName() { return m_szName; }
 	int GetGold() { return m_iGold; }
 	int GetCurHP() { return m_iCurHP; }
 	virtual int GetMaxHP() { return m_iMaxHP; }
