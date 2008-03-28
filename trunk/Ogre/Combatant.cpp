@@ -12,11 +12,14 @@ CCombatant::CCombatant()
 
 int CCombatant::Attack( CCombatant *pVictim )
 {
-	int hit = 35 + (m_iAttackPower - pVictim->GetDef());
+	int diff = m_iAttackPower - pVictim->GetDef();
+	int hit = 35 + diff;
 	int roll = rand()%100 + 1;
 	if ( roll < hit )
 	{
-		int damage = 1 + (m_iAttackPower - pVictim->GetDef());
+		int damage = 1;
+		if ( diff > 0 )
+			damage += diff;
 		pVictim->TakeDamage( damage );
 
 		return damage;
