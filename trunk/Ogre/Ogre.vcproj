@@ -168,6 +168,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DoubleMarkov.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\entry.cpp"
 				>
 			</File>
@@ -189,6 +193,10 @@
 			</File>
 			<File
 				RelativePath=".\MapLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NameGenerator.cpp"
 				>
 			</File>
 			<File
@@ -222,6 +230,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DoubleMarkov.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GameEngine.h"
 				>
 			</File>
@@ -239,6 +251,10 @@
 			</File>
 			<File
 				RelativePath=".\MapLoader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NameGenerator.h"
 				>
 			</File>
 			<File
