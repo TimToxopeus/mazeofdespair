@@ -196,6 +196,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RandomizedFactory.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Switch.cpp"
 				>
 			</File>
@@ -239,6 +243,10 @@
 			</File>
 			<File
 				RelativePath=".\Player.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RandomizedFactory.h"
 				>
 			</File>
 			<File

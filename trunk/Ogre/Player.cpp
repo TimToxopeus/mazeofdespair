@@ -5,6 +5,7 @@ using namespace std;
 
 CPlayer::CPlayer()
 {
+	m_szName = "Player";
 	m_iGold = 150;
 	m_iAttackPower = 10;
 	m_iDefense = 10;
