@@ -1,0 +1,31 @@
+// This is a comment
+material walls/funkywall1
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture Dirt.jpg
+			}
+		}
+	}
+
+}
+
+material robot/robot
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture r2skin.jpg
+			}
+		}
+	}
+
+}
+
