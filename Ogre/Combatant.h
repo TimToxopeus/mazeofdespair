@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Item.h"
+#include <string>
 
 class CCombatant
 {
 protected:
+	std::string m_szName;
 	int m_iGold;
 	int m_iAttackPower;
 	int m_iDefense;
@@ -13,6 +15,7 @@ protected:
 
 public:
 	CCombatant();
+	CCombatant(std::string szName, int iGold, int iATP, int iDef, int iHP );
 
 	int Attack( CCombatant *pVictim );
 	int TakeDamage( int iDamage );

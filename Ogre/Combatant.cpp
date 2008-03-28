@@ -4,10 +4,20 @@
 
 CCombatant::CCombatant()
 {
+	m_szName = "Generic simple creature";
 	m_iGold = 10;
 	m_iAttackPower = 5;
 	m_iDefense = 5;
 	m_iCurHP = m_iMaxHP = 10;
+}
+
+CCombatant::CCombatant(std::string szName, int iGold, int iATP, int iDef, int iHP )
+{
+	m_szName = szName;
+	m_iGold = iGold;
+	m_iAttackPower = iATP;
+	m_iDefense = iDef;
+	m_iCurHP = m_iMaxHP = iHP;
 }
 
 int CCombatant::Attack( CCombatant *pVictim )
