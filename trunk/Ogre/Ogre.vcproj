@@ -160,6 +160,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Combatant.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Door.cpp"
 				>
 			</File>
@@ -188,6 +192,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Player.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Switch.cpp"
 				>
 			</File>
@@ -202,6 +210,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\Combatant.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Door.h"
 				>
 			</File>
@@ -214,11 +226,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Item.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Key.h"
 				>
 			</File>
 			<File
 				RelativePath=".\MapLoader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Player.h"
 				>
 			</File>
 			<File
