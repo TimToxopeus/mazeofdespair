@@ -1,5 +1,5 @@
 /************************************************************************************
-*	Assignment 4 - The maze of despair												*
+*	Assignment 5 - The maze of despair												*
 *	Tim Toxopeus - 3206947															*
 *	Cetin Demir - 3236943															*
 ************************************************************************************/
@@ -25,13 +25,17 @@ using namespace Ogre;
 #include "Key.h"
 #include "Switch.h"
 
+#define CAMERA_NAME "SceneCamera"
+
 class CGameEngine : public FrameListener, WindowEventListener, public OIS::MouseListener
 {
 private:
     Root *m_pRoot;
     Camera *m_pCamera;						// The camera object pointer
+	Camera *m_pCombatCamera;				// The camera object pointer
 	SceneNode *m_pCameraNode;
-    SceneManager *m_pSceneManager;			// The Scene Manager object pointer
+    SceneManager *m_pPrimary;				// The Primary Scene Manager object pointer
+	SceneManager *m_pSecondary;				// The Secondary Scene Manager object pointer
     RenderWindow *m_pWindow;				
 	RaySceneQuery *m_pRaySceneQuery;		// The ray scene query pointer
 
@@ -109,6 +113,9 @@ public:
 	// Load map and objects
 	bool Load();
 
+	void SetupViewport(RenderWindow *pWindow, SceneManager *pCurrent);
+	static void Swap(SceneManager *&first, SceneManager *&second);
+
 	// Function that loads and sets up the tutorial level.
 	bool LoadLevel( const CEGUI::EventArgs &e );
 	// Function that loads and sets up adventure mode.
@@ -143,7 +150,7 @@ public:
 	void AddDoor( CDoor *pDoor ) { m_pDoors.push_back( pDoor ); }
 	void AddKey( CKey *pKey ) { m_pKeys.push_back( pKey ); }
 	void AddSwitch( CSwitch *pSwitch ) { m_pSwitches.push_back( pSwitch ); }
-	SceneManager *GetSceneManager() { return m_pSceneManager; }
+	SceneManager *GetSceneManager() { return m_pPrimary; }
 
 	// GUI
 	CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID);

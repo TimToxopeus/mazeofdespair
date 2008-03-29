@@ -1,5 +1,5 @@
 /************************************************************************************
-*	Assignment 4 - The maze of despair												*
+*	Assignment 5 - The maze of despair												*
 *	Tim Toxopeus - 3206947															*
 *	Cetin Demir - 3236943															*
 ************************************************************************************/
@@ -19,10 +19,10 @@ extern std::string itoa2(const int x);
 bool CGameEngine::Load()
 {
 	// Load own objects
-	m_pSceneManager->setAmbientLight(ColourValue(0, 0, 0));
-	m_pSceneManager->setShadowTechnique(SHADOWTYPE_STENCIL_ADDITIVE);
+	m_pPrimary->setAmbientLight(ColourValue(0, 0, 0));
+	m_pPrimary->setShadowTechnique(SHADOWTYPE_STENCIL_ADDITIVE);
 
-	m_pFlashlight = m_pSceneManager->createLight("Flashlight");
+	m_pFlashlight = m_pPrimary->createLight("Flashlight");
 	m_pFlashlight->setType(Light::LT_SPOTLIGHT);
 	m_pFlashlight->setDiffuseColour(1.0, 1.0, 1.0);
 	m_pFlashlight->setSpecularColour(1.0, 1.0, 1.0);
@@ -31,7 +31,7 @@ bool CGameEngine::Load()
 	m_pFlashlight->setPosition(m_pCamera->getPosition() - (m_pCamera->getDirection() * 50));
 	m_pFlashlight->setDirection(m_pCamera->getDirection());
 
-	m_pFlashlight2 = m_pSceneManager->createLight("Flashlight2");
+	m_pFlashlight2 = m_pPrimary->createLight("Flashlight2");
 	m_pFlashlight2->setType(Light::LT_POINT);
 	m_pFlashlight2->setDiffuseColour(1.0, 1.0, 1.0);
 	m_pFlashlight2->setSpecularColour(1.0, 1.0, 1.0);
@@ -62,7 +62,7 @@ void CGameEngine::Clean()
 	}
 	m_pSwitches.clear();
 
-	m_pSceneManager->clearScene();
+	m_pPrimary->clearScene();
 }
 
 //===============================================================
@@ -179,9 +179,9 @@ bool CGameEngine::frameStarted(const FrameEvent& evt)
 			m_bKeySelected = false;
 			door->Unlock();
 //			m_pKeys[0]->getSceneNode()->detachAllObjects();									// Detach all object of the node.
-//			m_pSceneManager->getRootSceneNode()->removeAndDestroyChild( "Switch_Node" );	// Remove and destroy the node from the root.
-			m_pSceneManager->destroyEntity( "Key" );
-			m_pSceneManager->getRootSceneNode()->removeAndDestroyChild( "Key_Node" );
+//			m_pPrimary->getRootSceneNode()->removeAndDestroyChild( "Switch_Node" );	// Remove and destroy the node from the root.
+			m_pPrimary->destroyEntity( "Key" );
+			m_pPrimary->getRootSceneNode()->removeAndDestroyChild( "Key_Node" );
 			delete m_pKeys[0];																// Remove from vector.
 			m_pKeys.clear();
 
@@ -262,7 +262,7 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 		{
 			m_iTorchCount -= 1;
 
-			Light *pTorch = m_pSceneManager->createLight("Torch" + itoa2(++m_iPlacedTorches));
+			Light *pTorch = m_pPrimary->createLight("Torch" + itoa2(++m_iPlacedTorches));
 			pTorch->setType(Light::LT_POINT);
 			pTorch->setDiffuseColour(1.0, 0.3, 0.3);
 			pTorch->setSpecularColour(1.0, 0.3, 0.3);
@@ -290,6 +290,14 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 		m_bStatsOn = !m_bStatsOn;
 		showDebugOverlay(m_bStatsOn);
 		m_fTimeUntilNextToggle = 1;
+	}
+
+	if( m_pKeyboard->isKeyDown(KC_V) && m_fTimeUntilNextToggle <= 0 )
+	{
+		// Swap scenemanagers  
+		Swap(m_pPrimary, m_pSecondary);
+	
+		SetupViewport(m_pWindow, m_pPrimary);
 	}
 
 	if( m_pKeyboard->isKeyDown(KC_T) && m_fTimeUntilNextToggle <= 0 )
@@ -424,7 +432,7 @@ void CGameEngine::toggleLights()
 	for ( int i = 0; i<keylights.size(); i++ )
 	{
 		string lightname = keylights[i];
-		Light *pLight = m_pSceneManager->getLight(lightname);
+		Light *pLight = m_pPrimary->getLight(lightname);
 		pLight->setVisible( !pLight->isVisible() );
 	}
 }
@@ -635,7 +643,7 @@ bool CGameEngine::LoadLevel( const CEGUI::EventArgs &e )
 	m_pCounterbox->setVisible(false);
 	CEGUI::MouseCursor::getSingleton().setVisible(true);
 
-	keylights = m_pMapLoader->LoadMap( "map.txt", m_pSceneManager, m_pCamera );
+	keylights = m_pMapLoader->LoadMap( "map.txt", m_pPrimary, m_pCamera );
 
 	m_pFlashlight->setPosition(m_pCamera->getPosition() - (m_pCamera->getDirection() * 50));
 	m_pFlashlight->setDirection(m_pCamera->getDirection());
@@ -691,7 +699,7 @@ void CGameEngine::NextLevel()
 	m_pCounterbox->setVisible(true);
 	CEGUI::MouseCursor::getSingleton().setVisible(true);
 
-	keylights = m_pMapLoader->LoadMap( itoa2(m_iLevel + 5), m_pSceneManager, m_pCamera, true );
+	keylights = m_pMapLoader->LoadMap( itoa2(m_iLevel + 5), m_pPrimary, m_pCamera, true );
 
 	m_pFlashlight->setPosition(m_pCamera->getPosition() - (m_pCamera->getDirection() * 50));
 	m_pFlashlight->setDirection(m_pCamera->getDirection());
