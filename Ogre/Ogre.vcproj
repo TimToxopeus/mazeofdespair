@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="Ogre"
 	ProjectGUID="{DC1ED502-2212-446D-B39C-A2B3122323E5}"
 	RootNamespace="Ogre"
@@ -164,6 +164,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CombatMode.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Door.cpp"
 				>
 			</File>
@@ -223,6 +227,10 @@
 			>
 			<File
 				RelativePath=".\Combatant.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CombatMode.h"
 				>
 			</File>
 			<File

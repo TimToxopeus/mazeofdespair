@@ -17,7 +17,7 @@ CGameEngine::CGameEngine()
     m_pCamera = NULL;
 	m_pCameraNode = NULL;
 
-    m_pSceneManager = NULL;
+    m_pPrimary = NULL;
     m_pWindow = NULL;
 	m_pDebugOverlay = NULL;
 	m_pInputManager = NULL;
@@ -84,20 +84,19 @@ bool CGameEngine::Init()
         return false;
 
 	// Create scene manager
-	m_pSceneManager = m_pRoot->createSceneManager(ST_GENERIC, "ExampleSMInstance");
-	
+	m_pPrimary = m_pRoot->createSceneManager(ST_GENERIC, "ExampleSMInstance");
+	m_pSecondary = m_pRoot->createSceneManager(ST_GENERIC, "secondary");
+
 	// Create camera
-	m_pCamera = m_pSceneManager->createCamera("PlayerCam");
+	m_pCamera = m_pPrimary->createCamera(CAMERA_NAME);
     m_pCamera->setPosition(Vector3(0,0,500));
     m_pCamera->lookAt(Vector3(0,0,-300));
     m_pCamera->setNearClipDistance(5);
-	// Set camera on a node? m_pCameraNode
 
-	// Create viewport
-    Viewport* vp = m_pWindow->addViewport(m_pCamera);
-    vp->setBackgroundColour(ColourValue(0,0,0));
-    m_pCamera->setAspectRatio( Real(vp->getActualWidth()) / Real(vp->getActualHeight()) );
-	
+	m_pCombatCamera = m_pSecondary->createCamera(CAMERA_NAME);
+
+	SetupViewport(m_pWindow, m_pPrimary);
+
 	// Set default number of mipmaps
 	TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
@@ -135,7 +134,7 @@ bool CGameEngine::Init()
 	m_pMouse->setEventCallback(this);
 
 	// Create RaySceneQuery
-	m_pRaySceneQuery = m_pSceneManager->createRayQuery(Ray());
+	m_pRaySceneQuery = m_pPrimary->createRayQuery(Ray());
 
 	//Set initial mouse clipping size
 	windowResized(m_pWindow);
@@ -145,8 +144,8 @@ bool CGameEngine::Init()
 	//Register as a Window listener
 	WindowEventUtilities::addWindowEventListener(m_pWindow, this);
 
-	// GUI
-	m_pGUIRenderer = new CEGUI::OgreCEGUIRenderer(m_pWindow, Ogre::RENDER_QUEUE_OVERLAY, false, 3000, m_pSceneManager);
+	// GUI for the primary scenemanager
+	m_pGUIRenderer = new CEGUI::OgreCEGUIRenderer(m_pWindow, Ogre::RENDER_QUEUE_OVERLAY, false, 3000, m_pPrimary);
 	m_pGUISystem = new CEGUI::System(m_pGUIRenderer);
 	CEGUI::SchemeManager::getSingleton().loadScheme((CEGUI::utf8*)"TaharezLookSkin.scheme");
 	m_pGUISystem->setDefaultMouseCursor((CEGUI::utf8*)"TaharezLook", (CEGUI::utf8*)"MouseArrow");
@@ -214,8 +213,32 @@ bool CGameEngine::Init()
 
 	m_pGUISystem->setGUISheet(sheet);
 
+
+	// GUI for the secondary scenemanager
+
+
+
 	m_pMapLoader = new CMapLoader();
 	return true;
+}
+
+void CGameEngine::SetupViewport(RenderWindow *pWindow, SceneManager *pCurrent)
+{
+    pWindow->removeAllViewports();
+
+    Camera *cam = pCurrent->getCamera(CAMERA_NAME);
+    Viewport *vp = pWindow->addViewport(cam);
+
+    vp->setBackgroundColour(ColourValue(0,0,0));
+    cam->setAspectRatio(Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
+    vp->setOverlaysEnabled(true);
+}
+
+void CGameEngine::Swap(SceneManager *&first, SceneManager *&second)
+{
+    SceneManager *tmp = first;
+    first = second;
+    second = tmp;
 }
 
 void CGameEngine::Run()
@@ -244,7 +267,7 @@ void CGameEngine::Shutdown()
     m_pRoot = NULL;
     m_pCamera = NULL;
 	m_pCameraNode = NULL;
-    m_pSceneManager = NULL;
+    m_pPrimary = NULL;
     m_pWindow = NULL;
 	m_pDebugOverlay = NULL;
 	m_pInputManager = NULL;
