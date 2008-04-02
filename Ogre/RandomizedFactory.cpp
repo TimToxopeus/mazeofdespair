@@ -31,13 +31,22 @@ string CRandomizedFactory::GetRandomMonsterName()
 	char cName[12];
 	m_pNameGenerator->GenerateName( 10, cName );
 
-	string name = cName;
+	string adjectives[] = { "Destroyer", "Defiler", "Corruptor", "Vanquisher", "Insidious", "Abhorred", "Horrible", "Terrible", "Dominator", "Atrocious",
+		"Repulsive", "Vile", "Horrid", "Heinous", "Unholy", "Fearful", "Loathsome", "Terrifying", "Intimidating", "Appalling" };
+	int count = 20;
+
+	string name = cName + " the " + adjectives[rand()%count];
 	return name;
 }
 
 CItem *CRandomizedFactory::GetRandomItem( int iSlot, int iLevel )
 {
-	return NULL;
+	string name = GetRandomItemName( iSlot );
+	int iStat = rand()%3;
+	int iBonus = rand()%(iLevel * 5) + 1;
+	int iValue = iBonus * 10;
+
+	return new CItem( name, iSlot, iStat, iBonus, iValue );
 }
 
 CCombatant *CRandomizedFactory::GetRandomMonster( int iLevel )
