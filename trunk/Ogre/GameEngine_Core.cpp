@@ -50,6 +50,13 @@ CGameEngine::CGameEngine()
 
 	m_pGUIRenderer = NULL;
 	m_pGUISystem = NULL;
+
+	m_pPlayer = NULL;
+	m_pFactory = NULL;
+
+	m_pItems = NULL;
+	m_pInventory = NULL;
+	m_pEquipment = NULL;
 }
 
 bool CGameEngine::Init()
@@ -144,6 +151,22 @@ bool CGameEngine::Init()
 	//Register as a Window listener
 	WindowEventUtilities::addWindowEventListener(m_pWindow, this);
 
+	// Other stuff
+	m_pMapLoader = new CMapLoader();
+	m_pPlayer = new CPlayer();
+	m_pFactory = new CRandomizedFactory();
+
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(0,1) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(1,2) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(2,3) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(3,4) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(4,5) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
+
 	// GUI for the primary scenemanager
 	m_pGUIRenderer = new CEGUI::OgreCEGUIRenderer(m_pWindow, Ogre::RENDER_QUEUE_OVERLAY, false, 3000, m_pPrimary);
 	m_pGUISystem = new CEGUI::System(m_pGUIRenderer);
@@ -153,22 +176,22 @@ bool CGameEngine::Init()
 	m_pGUISystem->setDefaultFont((CEGUI::utf8*)"BlueHighway-12");
 
 	CEGUI::WindowManager *win = CEGUI::WindowManager::getSingletonPtr();
-	CEGUI::Window *sheet = win->createWindow("DefaultGUISheet", "Root");
+	m_pSheet = win->createWindow("DefaultGUISheet", "Root");
 
 	m_pMainmenu = win->createWindow("TaharezLook/FrameWindow", "Root/Mainmenu");
 	m_pMainmenu->setSize( CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.3, 0)) );
 	m_pMainmenu->setPosition( CEGUI::UVector2(CEGUI::UDim(0.35,0), CEGUI::UDim(0.35,0)) );
-	sheet->addChildWindow(m_pMainmenu);
+	m_pSheet->addChildWindow(m_pMainmenu);
 
 	m_pInsanityBar = (CEGUI::ProgressBar *)win->createWindow("TaharezLook/ProgressBar", "Root/InsanityBar");
 	m_pInsanityBar->setSize( CEGUI::UVector2(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.03, 0)) );
 	m_pInsanityBar->setPosition( CEGUI::UVector2(CEGUI::UDim(0.2,0), CEGUI::UDim(0.01,0)) );
-	sheet->addChildWindow(m_pInsanityBar);
+	m_pSheet->addChildWindow(m_pInsanityBar);
 
 	m_pMessageBox = win->createWindow("TaharezLook/FrameWindow", "Root/MessageBox");
 	m_pMessageBox->setSize( CEGUI::UVector2(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.1, 0)) );
 	m_pMessageBox->setPosition( CEGUI::UVector2(CEGUI::UDim(0.2,0), CEGUI::UDim(0.05,0)) );
-	sheet->addChildWindow(m_pMessageBox);
+	m_pSheet->addChildWindow(m_pMessageBox);
 
 	m_pMessageBoxText = win->createWindow("TaharezLook/StaticText", "Root/MessageBox/Text" );
 	m_pMessageBoxText->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.7, 0)) );
@@ -199,7 +222,7 @@ bool CGameEngine::Init()
 
 	m_pCounterbox = win->createWindow("TaharezLook/Listbox", "Root/Counter" );
 	m_pCounterbox->setSize( CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)) );
-	sheet->addChildWindow(m_pCounterbox);
+	m_pSheet->addChildWindow(m_pCounterbox);
 
 	m_pTorchescounter = win->createWindow("TaharezLook/StaticText", "Root/Counter/TorchesCounter" );
 	m_pTorchescounter->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.8, 0)) );
@@ -211,14 +234,26 @@ bool CGameEngine::Init()
 	m_pMessageBox->setVisible(false);
 	m_pInsanityBar->setVisible(false);
 
-	m_pGUISystem->setGUISheet(sheet);
+	// CITY GUI
+	CEGUI::Texture *cTex = m_pGUIRenderer->createTexture("stad.jpg");
+	CEGUI::Imageset *imageSet = CEGUI::ImagesetManager::getSingleton().createImageset((CEGUI::utf8*)"CitySet", cTex);
+	imageSet->defineImage((CEGUI::utf8*)"stad.jpg", CEGUI::Point(0.0f, 0.0f), CEGUI::Size(cTex->getWidth(), cTex->getHeight()),	CEGUI::Point(0.0f,0.0f));
+
+	m_pCity = win->createWindow("TaharezLook/StaticImage", "Root/City");
+	m_pCity->setSize( CEGUI::UVector2(CEGUI::UDim(0.8, 0), CEGUI::UDim(0.8, 0)) );
+	m_pCity->setPosition( CEGUI::UVector2(CEGUI::UDim(0.1,0), CEGUI::UDim(0.1,0)) );
+	m_pCity->setProperty("Image", CEGUI::PropertyHelper::imageToString(&imageSet->getImage((CEGUI::utf8*)"stad.jpg")));
+	m_pSheet->addChildWindow(m_pCity);
+
+	m_pMainmenu->setVisible(false);
+	ShowCity();
+
+	// Set gui system
+	m_pGUISystem->setGUISheet(m_pSheet);
 
 
 	// GUI for the secondary scenemanager
 
-
-
-	m_pMapLoader = new CMapLoader();
 	return true;
 }
 
@@ -259,6 +294,17 @@ void CGameEngine::Shutdown()
 	if ( m_pMapLoader )
 	{
 		delete m_pMapLoader;
+		m_pMapLoader = NULL;
+	}
+	if ( m_pPlayer )
+	{
+		delete m_pPlayer;
+		m_pPlayer = NULL;
+	}
+	if ( m_pFactory )
+	{
+		delete m_pFactory;
+		m_pFactory = NULL;
 	}
 
 	WindowEventUtilities::removeWindowEventListener(m_pWindow, this);

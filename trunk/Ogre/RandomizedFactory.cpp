@@ -35,18 +35,22 @@ string CRandomizedFactory::GetRandomMonsterName()
 		"Repulsive", "Vile", "Horrid", "Heinous", "Unholy", "Fearful", "Loathsome", "Terrifying", "Intimidating", "Appalling" };
 	int count = 20;
 
-	string name = cName + " the " + adjectives[rand()%count];
+	string name = cName;
+	name += " the " + adjectives[rand()%count];
 	return name;
 }
 
 CItem *CRandomizedFactory::GetRandomItem( int iSlot, int iLevel )
 {
+	if ( iLevel < 1 ) iLevel = 1;
+
 	string name = GetRandomItemName( iSlot );
 	int iStat = rand()%3;
 	int iBonus = rand()%(iLevel * 5) + 1;
 	int iValue = iBonus * 10;
 
-	return new CItem( name, iSlot, iStat, iBonus, iValue );
+	CItem *pItem = new CItem( name, iSlot, iStat, iBonus, iValue );
+	return pItem;
 }
 
 CCombatant *CRandomizedFactory::GetRandomMonster( int iLevel )

@@ -25,6 +25,10 @@ using namespace Ogre;
 #include "Key.h"
 #include "Switch.h"
 
+#include "Player.h"
+#include "Combatant.h"
+#include "RandomizedFactory.h"
+
 #define CAMERA_NAME "SceneCamera"
 
 class CGameEngine : public FrameListener, WindowEventListener, public OIS::MouseListener
@@ -80,6 +84,9 @@ private:
 	bool m_bLevelComplete;					// The boolean for completing a level. 
 	bool m_bDisplayedSwitchTip;				// The boolean for displaying the light switch tip in tutorial mode. 
 
+	CPlayer *m_pPlayer;
+	CRandomizedFactory *m_pFactory;
+
 	void NextLevel();						// Function that sets up the next level
 
 	static CGameEngine *m_pInstance;		// Singleton instance of the CGameEngine object.
@@ -89,12 +96,18 @@ private:
 	std::vector<CDoor *> m_pDoors;
 	std::vector<CKey *> m_pKeys;
 	std::vector<CSwitch *> m_pSwitches;
+	std::vector<CItem *> m_pCityItems;
 
 	// CEGUI
 	CEGUI::System *m_pGUISystem;
 	CEGUI::OgreCEGUIRenderer *m_pGUIRenderer;
 
 	// Window objects for all the menu's and bars.
+	CEGUI::Window *m_pSheet;
+	CEGUI::Window *m_pCity;
+	CEGUI::Window *m_pItems;
+	CEGUI::Window *m_pEquipment;
+	CEGUI::Window *m_pInventory;
 	CEGUI::Window *m_pMainmenu;	
 	CEGUI::Window *m_pCounterbox;
 	CEGUI::Window *m_pTorchescounter;
@@ -125,6 +138,8 @@ public:
 	
 	// Start the rendering.
 	void Run();
+
+	void ShowCity();
 
 	void Clean();
 	void Shutdown();
