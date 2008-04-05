@@ -30,5 +30,5 @@ public:
 	inline int GetStat() { return m_iStat; }
 	inline int GetBonus() { return m_iBonus; }
 	inline int GetValue() { return m_iValue; }
-	inline std::string GetBonusString() { std::string str; if ( m_iStat == 1 ) str = "Attack power"; else if ( m_iStat == 2 ) str = "Defensive power"; else str = "Hitpoints"; return str; }
+	inline std::string GetBonusString() { std::string str; if ( m_iStat == 0 ) str = "Attack power"; else if ( m_iStat == 1 ) str = "Defensive power"; else str = "Hitpoints"; return str; }
 };

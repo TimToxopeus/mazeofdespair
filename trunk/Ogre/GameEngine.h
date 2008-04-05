@@ -90,8 +90,6 @@ private:
 	int m_iSelectedType;
 	int m_iSelectedIndex;
 
-	void NextLevel();						// Function that sets up the next level
-
 	static CGameEngine *m_pInstance;		// Singleton instance of the CGameEngine object.
 	CGameEngine();				
 
@@ -108,6 +106,7 @@ private:
 	// Window objects for all the menu's and bars.
 	CEGUI::Window *m_pSheet;
 	CEGUI::Window *m_pCity;
+	CEGUI::Window *m_pAdventureMode;
 	CEGUI::Window *m_pItems;
 	CEGUI::Window *m_pEquipment;
 	CEGUI::Window *m_pInventory;
@@ -148,10 +147,11 @@ public:
 	// Start the rendering.
 	void Run();
 
-	void ShowCity();
+	void ShowCity(bool refreshShop = true);
 	bool ClickItem( const CEGUI::EventArgs &e );
 	bool BuySellItem( const CEGUI::EventArgs &e );
 	bool EquipDequipItem( const CEGUI::EventArgs &e );
+	bool NextLevel( const CEGUI::EventArgs &e );							// Function that sets up the next level
 
 	void Clean();
 	void Shutdown();

@@ -171,7 +171,7 @@ bool CGameEngine::Init()
 	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(9,10) );
 
 	for ( int i = 0; i<10; i++ )
-		m_pPlayer->EquipItemFromInventory( i );
+		m_pPlayer->EquipItemFromInventory( 0 );
 
 	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(0,1) );
 	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(1,2) );
@@ -251,7 +251,9 @@ bool CGameEngine::Init()
 	m_pMessageBox->setVisible(false);
 	m_pInsanityBar->setVisible(false);
 
+	//======================================================================================================
 	// CITY GUI
+	//======================================================================================================
 	CEGUI::Texture *cTex = m_pGUIRenderer->createTexture("stad.jpg");
 	CEGUI::Imageset *imageSet = CEGUI::ImagesetManager::getSingleton().createImageset((CEGUI::utf8*)"CitySet", cTex);
 	imageSet->defineImage((CEGUI::utf8*)"stad.jpg", CEGUI::Point(0.0f, 0.0f), CEGUI::Size(cTex->getWidth(), cTex->getHeight()),	CEGUI::Point(0.0f,0.0f));
@@ -261,6 +263,13 @@ bool CGameEngine::Init()
 	m_pCity->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.1,0)) );
 	m_pCity->setProperty("Image", CEGUI::PropertyHelper::imageToString(&imageSet->getImage((CEGUI::utf8*)"stad.jpg")));
 	m_pSheet->addChildWindow(m_pCity);
+
+	m_pAdventureMode = win->createWindow("TaharezLook/Button", "Root/Adventure Mode");
+	m_pAdventureMode->setText("Start adventuring");
+	m_pAdventureMode->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.08, 0)));
+	m_pAdventureMode->setPosition(CEGUI::UVector2(CEGUI::UDim(0.05, 0), CEGUI::UDim(0.90, 0)));
+	m_pAdventureMode->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
+	m_pSheet->addChildWindow(m_pAdventureMode);
 
 	CEGUI::Window *m_pEquipmentLabel = win->createWindow("TaharezLook/StaticText", "Root/City/EquipmentLabel" );
 	m_pEquipmentLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );

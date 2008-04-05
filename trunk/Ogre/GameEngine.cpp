@@ -226,19 +226,23 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 		m_vTranslateVector.z = m_fMoveScale;	// Move camera backward
 
 	if(m_pKeyboard->isKeyDown(KC_RIGHT))
-		m_pCamera->yaw(-m_fRotScale);
-
-	if(m_pKeyboard->isKeyDown(KC_RETURN) && m_bLevelComplete )
-		NextLevel();
+		m_pCamera->yaw(-m_fRotScale * 3);
 
 	if(m_pKeyboard->isKeyDown(KC_LEFT))
-		m_pCamera->yaw(m_fRotScale);
+		m_pCamera->yaw(m_fRotScale * 3);
+
+	if(m_pKeyboard->isKeyDown(KC_RETURN) && m_bLevelComplete )
+	{
+		CEGUI::EventArgs e;
+		NextLevel(e);
+	}
 
 	if( m_pKeyboard->isKeyDown(KC_ESCAPE) && m_fTimeUntilNextToggle <= 0 )
 	{
 		if ( m_pCity->isVisible() )
 		{
 			m_pCity->setVisible( false );
+			m_pAdventureMode->setVisible( false );
 			m_pMainmenu->setVisible( true );
 			m_bHadCityOpen = true;
 		}
@@ -254,6 +258,7 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 				{
 					m_pMainmenu->setVisible( false );
 					m_pCity->setVisible( true );
+					m_pAdventureMode->setVisible( true );
 				}
 				else
 					return false;
@@ -656,6 +661,8 @@ bool CGameEngine::LoadLevel( const CEGUI::EventArgs &e )
 
 	m_iTorchCount = 0;
 
+	m_pCity->setVisible( false );
+	m_pAdventureMode->setVisible( false );
 	m_pMainmenu->setVisible(false);
 	m_pCounterbox->setVisible(false);
 	CEGUI::MouseCursor::getSingleton().setVisible(true);
@@ -684,10 +691,12 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 {
 	m_iLevel = 0;
 	m_iTorchCount = 10;
-	NextLevel();
+	NextLevel(e);
 
 	m_bInAdventureMode = true;
 	m_bDisplayedSwitchTip = false;
+	m_pCity->setVisible( false );
+	m_pAdventureMode->setVisible( false );
 
 	m_pMessageBox->setVisible( true );
 	m_pMessageBoxText->setText("In adventure mode you have to defeat the ninja before going insane.\nWhen you run out of torches you will slowly lose your mind in the dark!");
@@ -702,7 +711,7 @@ bool CGameEngine::Quit( const CEGUI::EventArgs &e )
 	return true;
 }
 
-void CGameEngine::NextLevel()
+bool CGameEngine::NextLevel( const CEGUI::EventArgs &e )
 {
 	Clean();
 	Load();
@@ -714,6 +723,8 @@ void CGameEngine::NextLevel()
 	Ogre::LogManager::getSingleton().logMessage("Loading level!");
 	m_pMainmenu->setVisible(false);
 	m_pCounterbox->setVisible(true);
+	m_pCity->setVisible( false );
+	m_pAdventureMode->setVisible( false );
 	CEGUI::MouseCursor::getSingleton().setVisible(true);
 
 	keylights = m_pMapLoader->LoadMap( itoa2(m_iLevel + 5), m_pPrimary, m_pCamera, true );
@@ -727,13 +738,14 @@ void CGameEngine::NextLevel()
 
 	m_iTorchCount += m_iLevel;
 	m_iLevel += 1;
+	return true;
 }
 
-void CGameEngine::ShowCity()
+void CGameEngine::ShowCity(bool refreshShop)
 {
 	CEGUI::WindowManager *win = CEGUI::WindowManager::getSingletonPtr();
-	vector<CItem *> inventory = m_pPlayer->GetInventory();
 	vector<CItem *> equipment = m_pPlayer->GetEquipment();
+	vector<CItem *> inventory = m_pPlayer->GetInventory();
 	m_pCharacterWindow->setText("Hitpoints: " + itoa2(m_pPlayer->GetMaxHP()) + 
 								"\nAttack power: " + itoa2(m_pPlayer->GetATP()) + 
 								"\nDefensive power: " + itoa2(m_pPlayer->GetDef()) + 
@@ -764,11 +776,20 @@ void CGameEngine::ShowCity()
 		win->destroyWindow( m_pItems );
 		m_pItems = NULL;
 	}
-	if ( m_pCityItems.size() > 0 )
+	if ( refreshShop )
 	{
-		for ( int a = 0; a<m_pCityItems.size(); a++ )
-			delete m_pCityItems[a];
-		m_pCityItems.clear();
+		if ( m_pCityItems.size() > 0 )
+		{
+			for ( int a = 0; a<m_pCityItems.size(); a++ )
+				delete m_pCityItems[a];
+			m_pCityItems.clear();
+		}
+
+		for ( int a = 0; a<15; a++ )
+		{
+			CItem *pItem = m_pFactory->GetRandomItem(rand()%10, rand()%10);
+			m_pCityItems.push_back( pItem );
+		}
 	}
 
 	// Create inventory, equipment and items panels
@@ -791,6 +812,19 @@ void CGameEngine::ShowCity()
 	m_pCity->addChildWindow(m_pItems);
 
 	// Populate bars with items
+	for ( int a = 0; a<equipment.size(); a++ )
+	{
+		CItem *pItem = equipment[a];
+
+		string buttonName = "Root/City/Equipment/Button" + itoa2(a);
+		CEGUI::Window *m_pItemButton = win->createWindow("TaharezLook/Button", buttonName);
+		m_pItemButton->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.09, 0)) );
+		m_pItemButton->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.01 + (a * 0.10),0)) );
+		m_pItemButton->setText(pItem->GetName());
+		m_pItemButton->setAlpha(64);
+		m_pItemButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::ClickItem, this));
+		m_pEquipment->addChildWindow(m_pItemButton);
+	}
 	for ( int a = 0; a<inventory.size(); a++ )
 	{
 		CItem *pItem = inventory[a];
@@ -804,24 +838,10 @@ void CGameEngine::ShowCity()
 		m_pItemButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::ClickItem, this));
 		m_pInventory->addChildWindow(m_pItemButton);
 	}
-	for ( int a = 0; a<equipment.size(); a++ )
+	for ( int a = 0; a<m_pCityItems.size(); a++ )
 	{
-		CItem *pItem = equipment[a];
-
-		string buttonName = "Root/City/Equipment/Button" + itoa2(a);
-		CEGUI::Window *m_pItemButton = win->createWindow("TaharezLook/Button", buttonName);
-		m_pItemButton->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.09, 0)) );
-		m_pItemButton->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.01 + (a * 0.10),0)) );
-		m_pItemButton->setText(pItem->GetName());
-		m_pItemButton->setAlpha(64);
-		m_pItemButton->setTooltipText("Test");
-		m_pItemButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::ClickItem, this));
-		m_pEquipment->addChildWindow(m_pItemButton);
-	}
-	for ( int a = 0; a<15; a++ )
-	{
-		CItem *pItem = m_pFactory->GetRandomItem(rand()%10, rand()%10);
-		m_pCityItems.push_back( pItem );
+		CItem *pItem = NULL;
+		pItem = m_pCityItems[a];
 
 		string buttonName = "Root/City/Items/Button" + itoa2(a);
 		CEGUI::Window *m_pItemButton = win->createWindow("TaharezLook/Button", buttonName);
@@ -839,7 +859,6 @@ bool CGameEngine::ClickItem( const CEGUI::EventArgs &e )
 	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
 	CEGUI::String senderID = we.window->getName();
 
-	Ogre::LogManager::getSingleton().logMessage(senderID.c_str());
 	int type = 0;
 	if ( senderID.find("Equipment") != CEGUI::String::npos )
 		type = 1;
@@ -852,7 +871,6 @@ bool CGameEngine::ClickItem( const CEGUI::EventArgs &e )
 
 	int pos = 10 + ((type == 3) ? 5 : 9) + 7;
 	CEGUI::String substr = senderID.substr(pos, senderID.length() - pos);
-	Ogre::LogManager::getSingleton().logMessage(substr.c_str());
 
 	string strIndex = substr.c_str();
 	std::istringstream strin(strIndex);
@@ -904,6 +922,7 @@ bool CGameEngine::ClickItem( const CEGUI::EventArgs &e )
 			m_pItemWindow->setVisible( false );
 			m_pBuySellSelected->setVisible( false );
 			m_pEquipDequipSelected->setVisible( false );
+			m_iSelectedType = m_iSelectedIndex = 0;
 			break;
 		}
 
@@ -925,11 +944,55 @@ bool CGameEngine::ClickItem( const CEGUI::EventArgs &e )
 
 bool CGameEngine::BuySellItem( const CEGUI::EventArgs &e )
 {
+	if ( m_iSelectedType != 3 )
+	{
+		// Sell
+		if ( m_iSelectedType == 1 )
+			m_pPlayer->SellItemFromEquipment(m_iSelectedIndex);
+		else
+			m_pPlayer->SellItemFromInventory(m_iSelectedIndex);
+		ShowCity(false);
+	}
+	else
+	{
+		// Buy
+		vector<CItem *> inventory = m_pPlayer->GetInventory();
+		CItem *pItem = m_pCityItems[m_iSelectedIndex];
+		if ( inventory.size() < 10 && m_pPlayer->GetGold() > pItem->GetValue() )
+		{
+			m_pCityItems.erase(m_pCityItems.begin() + m_iSelectedIndex);
+
+			m_pPlayer->DeductCash( pItem->GetValue() );
+			m_pPlayer->AddItemToInventory(pItem);
+			ShowCity(false);
+		}
+	}
+
 	return true;
 }
 
 bool CGameEngine::EquipDequipItem( const CEGUI::EventArgs &e )
 {
+	vector<CItem *> equipment = m_pPlayer->GetEquipment();
+	vector<CItem *> inventory = m_pPlayer->GetInventory();
+	if ( m_iSelectedType == 1 )
+	{
+		// Dequip
+		if ( inventory.size() < 10 )
+		{
+			if ( m_pPlayer->DequipItemFromEquipment(m_iSelectedIndex) )
+				ShowCity( false );
+		}
+	}
+	else if ( m_iSelectedType == 2 )
+	{
+		// Equip
+		if ( equipment.size() < 10 )
+		{
+			if ( m_pPlayer->EquipItemFromInventory(m_iSelectedIndex) )
+				ShowCity( false );
+		}
+	}
 	return true;
 }
 
