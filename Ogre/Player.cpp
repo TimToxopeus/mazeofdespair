@@ -81,30 +81,30 @@ bool CPlayer::AddItemToInventory( CItem *item )
 
 bool CPlayer::EquipItemFromInventory( int index )
 {
-	if ( index < 0 || index > 9 )
+	int a = GetRealIndex( index, false );
+	if ( a == -1 )
 		return false;
-
-	if ( m_Equipment[m_Inventory[index]->GetSlot()] == NULL )
+	if ( m_Equipment[m_Inventory[a]->GetSlot()] == NULL )
 	{
-		m_Equipment[m_Inventory[index]->GetSlot()] = m_Inventory[index];
-		m_Inventory[index] = NULL;
+		m_Equipment[m_Inventory[a]->GetSlot()] = m_Inventory[a];
+		m_Inventory[a] = NULL;
 		return true;
 	}
 
 	return false;
 }
 
-bool CPlayer::DequipItemFromEquipment( int slot )
+bool CPlayer::DequipItemFromEquipment( int index )
 {
-	if ( slot < 0 || slot > 9 )
+	int a = GetRealIndex( index, true );
+	if ( a == -1 )
 		return false;
-
 	for ( int i = 0; i<10; i++ )
 	{
 		if ( m_Inventory[i] == NULL )
 		{
-			m_Inventory[i] = m_Equipment[slot];
-			m_Equipment[slot] = NULL;
+			m_Inventory[i] = m_Equipment[a];
+			m_Equipment[a] = NULL;
 			return true;
 		}
 	}
@@ -134,22 +134,74 @@ vector<CItem *> CPlayer::GetInventory()
 	return inventory;
 }
 
-void CPlayer::SellItemFromEquipment( int slot )
+void CPlayer::SellItemFromEquipment( int index )
 {
-	if ( slot < 0 || slot > 9 )
-		return;
+	int a = GetRealIndex(index, true);
+	if ( a != -1 )
 
-	m_iGold += m_Equipment[slot]->GetValue();
-	delete m_Equipment[slot];
-	m_Equipment[slot] = NULL;
+	{
+		m_iGold += m_Equipment[a]->GetValue();
+		delete m_Equipment[a];
+		m_Equipment[a] = NULL;
+	}
 }
 
 void CPlayer::SellItemFromInventory( int index )
 {
-	if ( index < 0 || index > 9 )
-		return;
+	int a = GetRealIndex(index, false);
+	if ( a != -1 )
+	{
+		m_iGold += m_Inventory[a]->GetValue();
+		delete m_Inventory[a];
+		m_Inventory[a] = NULL;
+	}
+}
 
-	m_iGold += m_Inventory[index]->GetValue();
-	delete m_Inventory[index];
-	m_Inventory[index] = NULL;
+int CPlayer::GetRealIndex( int index, bool equipment )
+{
+	if ( index < 0 || index > 9 )
+		return -1;
+
+	int a = 0;
+	int i = index;
+	if ( i == 0 )
+	{
+		// set a to the first result
+		for ( a = 0; a<10; a++ )
+		{
+			if ( equipment )
+			{
+				if ( m_Equipment[a] != NULL )
+					break;
+			}
+			else
+			{
+				if ( m_Inventory[a] != NULL )
+					break;
+			}
+		}
+	}
+	else
+	{
+		i++;
+		for ( a = 0; a<10; a++ )
+		{
+			if ( equipment )
+			{
+				if ( m_Equipment[a] != NULL )
+					i--;
+			}
+			else
+			{
+				if ( m_Inventory[a] != NULL )
+					i--;
+			}
+			if ( i == 0 )
+				break;
+		}
+	}
+
+	if ( i == 0 )
+		return a;
+	return -1;
 }
