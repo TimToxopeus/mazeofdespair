@@ -86,6 +86,9 @@ private:
 
 	CPlayer *m_pPlayer;
 	CRandomizedFactory *m_pFactory;
+	bool m_bHadCityOpen;
+	int m_iSelectedType;
+	int m_iSelectedIndex;
 
 	void NextLevel();						// Function that sets up the next level
 
@@ -115,6 +118,12 @@ private:
 	CEGUI::Window *m_pMessageBoxText;
 	CEGUI::ProgressBar *m_pInsanityBar;
 	CEGUI::Window *m_pAdventure;
+	CEGUI::Window *m_pItemLabel;
+	CEGUI::Window *m_pItemWindow;
+	CEGUI::Window *m_pCharacterWindow;
+	CEGUI::Window *m_pBuySellSelected;
+	CEGUI::Window *m_pEquipDequipSelected;
+
 	// Timer for windows.
 	Real m_fMessageTime;
 
@@ -140,6 +149,9 @@ public:
 	void Run();
 
 	void ShowCity();
+	bool ClickItem( const CEGUI::EventArgs &e );
+	bool BuySellItem( const CEGUI::EventArgs &e );
+	bool EquipDequipItem( const CEGUI::EventArgs &e );
 
 	void Clean();
 	void Shutdown();

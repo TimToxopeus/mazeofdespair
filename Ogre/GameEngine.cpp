@@ -236,7 +236,13 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 
 	if( m_pKeyboard->isKeyDown(KC_ESCAPE) && m_fTimeUntilNextToggle <= 0 )
 	{
-		if ( m_pMainmenu->isVisible() )
+		if ( m_pCity->isVisible() )
+		{
+			m_pCity->setVisible( false );
+			m_pMainmenu->setVisible( true );
+			m_bHadCityOpen = true;
+		}
+		else if ( m_pMainmenu->isVisible() )
 		{
 			if ( m_bLoaded )
 			{
@@ -244,7 +250,13 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 			}
 			else
 			{
-				return false;
+				if ( m_bHadCityOpen == true )
+				{
+					m_pMainmenu->setVisible( false );
+					m_pCity->setVisible( true );
+				}
+				else
+					return false;
 			}
 		}
 		else
@@ -481,17 +493,21 @@ bool CGameEngine::mouseMoved(const OIS::MouseEvent &arg)
 bool CGameEngine::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
 	m_pGUISystem->injectMouseButtonDown(convertButton(id));
-	if (id == OIS::MB_Left)
-    {
-		mLMouseDown = true;
-        onLeftPressed(arg);
-	}
-	if (id == OIS::MB_Right)
-    {		
-		mRMouseDown = true;
-		onRightPressed(arg);
-		// Hide the mouse cursor when rotating the camera.
-		CEGUI::MouseCursor::getSingleton().hide();		
+
+	if ( m_pMainmenu->isVisible() == false && m_pCity->isVisible() == false )
+	{
+		if (id == OIS::MB_Left)
+		{
+			mLMouseDown = true;
+			onLeftPressed(arg);
+		}
+		if (id == OIS::MB_Right)
+		{		
+			mRMouseDown = true;
+			onRightPressed(arg);
+			// Hide the mouse cursor when rotating the camera.
+			CEGUI::MouseCursor::getSingleton().hide();		
+		}
 	}
 
     return true;
@@ -718,6 +734,16 @@ void CGameEngine::ShowCity()
 	CEGUI::WindowManager *win = CEGUI::WindowManager::getSingletonPtr();
 	vector<CItem *> inventory = m_pPlayer->GetInventory();
 	vector<CItem *> equipment = m_pPlayer->GetEquipment();
+	m_pCharacterWindow->setText("Hitpoints: " + itoa2(m_pPlayer->GetMaxHP()) + 
+								"\nAttack power: " + itoa2(m_pPlayer->GetATP()) + 
+								"\nDefensive power: " + itoa2(m_pPlayer->GetDef()) + 
+								"\nGold: " + itoa2(m_pPlayer->GetGold()) + " goldpieces");
+
+	m_iSelectedType = m_iSelectedIndex = 0;
+	m_pItemLabel->setVisible( false );
+	m_pItemWindow->setVisible( false );
+	m_pBuySellSelected->setVisible( false );
+	m_pEquipDequipSelected->setVisible( false );
 
 	// Reset old information
 	if ( m_pInventory )
@@ -747,20 +773,20 @@ void CGameEngine::ShowCity()
 
 	// Create inventory, equipment and items panels
 	m_pEquipment = win->createWindow("TaharezLook/Listbox", "Root/Equipped");
-	m_pEquipment->setSize( CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.45, 0)) );
-	m_pEquipment->setPosition(CEGUI::UVector2(CEGUI::UDim(0.10, 0), CEGUI::UDim(0.03, 0)));
+	m_pEquipment->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.45, 0)) );
+	m_pEquipment->setPosition(CEGUI::UVector2(CEGUI::UDim(0.01, 0), CEGUI::UDim(0.05, 0)));
 	m_pEquipment->setAlpha(25);
 	m_pCity->addChildWindow(m_pEquipment);
 
 	m_pInventory = win->createWindow("TaharezLook/Listbox", "Root/Inventory");
-	m_pInventory->setSize( CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.45, 0)) );
-	m_pInventory->setPosition(CEGUI::UVector2(CEGUI::UDim(0.10, 0), CEGUI::UDim(0.52, 0)));
+	m_pInventory->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.45, 0)) );
+	m_pInventory->setPosition(CEGUI::UVector2(CEGUI::UDim(0.01, 0), CEGUI::UDim(0.54, 0)));
 	m_pInventory->setAlpha(25);
 	m_pCity->addChildWindow(m_pInventory);
 
 	m_pItems = win->createWindow("TaharezLook/Listbox", "Root/City/Items");
-	m_pItems->setSize( CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.94, 0)) );
-	m_pItems->setPosition(CEGUI::UVector2(CEGUI::UDim(0.55, 0), CEGUI::UDim(0.03, 0)));
+	m_pItems->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.94, 0)) );
+	m_pItems->setPosition(CEGUI::UVector2(CEGUI::UDim(0.69, 0), CEGUI::UDim(0.05, 0)));
 	m_pItems->setAlpha(25);
 	m_pCity->addChildWindow(m_pItems);
 
@@ -774,6 +800,8 @@ void CGameEngine::ShowCity()
 		m_pItemButton->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.09, 0)) );
 		m_pItemButton->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.01 + (a * 0.10),0)) );
 		m_pItemButton->setText(pItem->GetName());
+		m_pItemButton->setAlpha(64);
+		m_pItemButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::ClickItem, this));
 		m_pInventory->addChildWindow(m_pItemButton);
 	}
 	for ( int a = 0; a<equipment.size(); a++ )
@@ -785,6 +813,9 @@ void CGameEngine::ShowCity()
 		m_pItemButton->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.09, 0)) );
 		m_pItemButton->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.01 + (a * 0.10),0)) );
 		m_pItemButton->setText(pItem->GetName());
+		m_pItemButton->setAlpha(64);
+		m_pItemButton->setTooltipText("Test");
+		m_pItemButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::ClickItem, this));
 		m_pEquipment->addChildWindow(m_pItemButton);
 	}
 	for ( int a = 0; a<15; a++ )
@@ -797,6 +828,108 @@ void CGameEngine::ShowCity()
 		m_pItemButton->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.04, 0)) );
 		m_pItemButton->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.01 + (a * 0.05),0)) );
 		m_pItemButton->setText(pItem->GetName());
+		m_pItemButton->setAlpha(64);
+		m_pItemButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::ClickItem, this));
 		m_pItems->addChildWindow(m_pItemButton);
 	}
 }
+
+bool CGameEngine::ClickItem( const CEGUI::EventArgs &e )
+{
+	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
+	CEGUI::String senderID = we.window->getName();
+
+	Ogre::LogManager::getSingleton().logMessage(senderID.c_str());
+	int type = 0;
+	if ( senderID.find("Equipment") != CEGUI::String::npos )
+		type = 1;
+	else if ( senderID.find("Inventory") != CEGUI::String::npos )
+		type = 2;
+	else if ( senderID.find("Items") != CEGUI::String::npos )
+		type = 3;
+	if ( type == 0 )
+		return true;
+
+	int pos = 10 + ((type == 3) ? 5 : 9) + 7;
+	CEGUI::String substr = senderID.substr(pos, senderID.length() - pos);
+	Ogre::LogManager::getSingleton().logMessage(substr.c_str());
+
+	string strIndex = substr.c_str();
+	std::istringstream strin(strIndex);
+	int index;
+	strin >> index;
+	
+	if ( m_iSelectedType == type && m_iSelectedIndex == index )
+	{
+		m_pItemLabel->setVisible( false );
+		m_pItemWindow->setVisible( false );
+		m_pBuySellSelected->setVisible( false );
+		m_pEquipDequipSelected->setVisible( false );
+		m_iSelectedType = m_iSelectedIndex = 0;
+	}
+	else // Show item
+	{
+		m_pItemLabel->setVisible( true );
+		m_pItemWindow->setVisible( true );
+		m_iSelectedType = type;
+		m_iSelectedIndex = index;
+
+		CItem *pItem = NULL;
+		vector<CItem *> container;
+
+		switch ( m_iSelectedType )
+		{
+		case 1:
+			container = m_pPlayer->GetEquipment();
+			m_pBuySellSelected->setText( "Sell item" );
+			m_pEquipDequipSelected->setText( "Dequip item" );
+			m_pBuySellSelected->setVisible( true );
+			m_pEquipDequipSelected->setVisible( true );
+			break;
+		case 2:
+			container = m_pPlayer->GetInventory();
+			m_pBuySellSelected->setText( "Sell item" );
+			m_pEquipDequipSelected->setText( "Equip item" );
+			m_pBuySellSelected->setVisible( true );
+			m_pEquipDequipSelected->setVisible( true );
+			break;
+		case 3:
+			container = m_pCityItems;
+			m_pBuySellSelected->setText( "Buy item" );
+			m_pBuySellSelected->setVisible( true );
+			m_pEquipDequipSelected->setVisible( false );
+			break;
+		default:
+			m_pItemLabel->setVisible( false );
+			m_pItemWindow->setVisible( false );
+			m_pBuySellSelected->setVisible( false );
+			m_pEquipDequipSelected->setVisible( false );
+			break;
+		}
+
+		if ( container.size() > 0 )
+		{
+			pItem = container[m_iSelectedIndex];
+		}
+
+		if ( pItem != NULL )
+		{
+			m_pItemWindow->setText( pItem->GetName() + "\n+" +
+									itoa2(pItem->GetBonus()) + " " + pItem->GetBonusString() + "\n" +
+									"Value: " + itoa2(pItem->GetValue()) + " goldpieces" );
+		}
+	}
+
+	return true;
+}
+
+bool CGameEngine::BuySellItem( const CEGUI::EventArgs &e )
+{
+	return true;
+}
+
+bool CGameEngine::EquipDequipItem( const CEGUI::EventArgs &e )
+{
+	return true;
+}
+

@@ -47,6 +47,7 @@ CGameEngine::CGameEngine()
 	m_bLoaded = false;
 	m_bInAdventureMode = false;
 	m_bDisplayedSwitchTip = false;
+	m_bHadCityOpen = true;
 
 	m_pGUIRenderer = NULL;
 	m_pGUISystem = NULL;
@@ -150,6 +151,8 @@ bool CGameEngine::Init()
 
 	//Register as a Window listener
 	WindowEventUtilities::addWindowEventListener(m_pWindow, this);
+	m_bStatsOn = false;
+	showDebugOverlay(false);
 
 	// Other stuff
 	m_pMapLoader = new CMapLoader();
@@ -162,10 +165,24 @@ bool CGameEngine::Init()
 	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(3,4) );
 	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(4,5) );
 	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(6,7) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(7,8) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(8,9) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(9,10) );
+
+	for ( int i = 0; i<10; i++ )
+		m_pPlayer->EquipItemFromInventory( i );
+
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(0,1) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(1,2) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(2,3) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(3,4) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(4,5) );
 	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(6,7) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(7,8) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(8,9) );
+	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(9,10) );
 
 	// GUI for the primary scenemanager
 	m_pGUIRenderer = new CEGUI::OgreCEGUIRenderer(m_pWindow, Ogre::RENDER_QUEUE_OVERLAY, false, 3000, m_pPrimary);
@@ -240,10 +257,72 @@ bool CGameEngine::Init()
 	imageSet->defineImage((CEGUI::utf8*)"stad.jpg", CEGUI::Point(0.0f, 0.0f), CEGUI::Size(cTex->getWidth(), cTex->getHeight()),	CEGUI::Point(0.0f,0.0f));
 
 	m_pCity = win->createWindow("TaharezLook/StaticImage", "Root/City");
-	m_pCity->setSize( CEGUI::UVector2(CEGUI::UDim(0.8, 0), CEGUI::UDim(0.8, 0)) );
-	m_pCity->setPosition( CEGUI::UVector2(CEGUI::UDim(0.1,0), CEGUI::UDim(0.1,0)) );
+	m_pCity->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.8, 0)) );
+	m_pCity->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.1,0)) );
 	m_pCity->setProperty("Image", CEGUI::PropertyHelper::imageToString(&imageSet->getImage((CEGUI::utf8*)"stad.jpg")));
 	m_pSheet->addChildWindow(m_pCity);
+
+	CEGUI::Window *m_pEquipmentLabel = win->createWindow("TaharezLook/StaticText", "Root/City/EquipmentLabel" );
+	m_pEquipmentLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );
+	m_pEquipmentLabel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.01, 0), CEGUI::UDim(0.01, 0)));
+	m_pEquipmentLabel->setText("Equipment");
+	m_pEquipmentLabel->setAlpha(64);
+	m_pCity->addChildWindow(m_pEquipmentLabel);
+
+	CEGUI::Window *m_pInventoryLabel = win->createWindow("TaharezLook/StaticText", "Root/City/InventoryLabel" );
+	m_pInventoryLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );
+	m_pInventoryLabel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.01, 0), CEGUI::UDim(0.50, 0)));
+	m_pInventoryLabel->setText("Inventory");
+	m_pInventoryLabel->setAlpha(64);
+	m_pCity->addChildWindow(m_pInventoryLabel);
+
+	CEGUI::Window *m_pShopLabel = win->createWindow("TaharezLook/StaticText", "Root/City/ItemsLabel" );
+	m_pShopLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );
+	m_pShopLabel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.69, 0), CEGUI::UDim(0.01, 0)));
+	m_pShopLabel->setText("Ye olde shoppe");
+	m_pShopLabel->setAlpha(64);
+	m_pCity->addChildWindow(m_pShopLabel);
+
+	CEGUI::Window *m_pStatsLabel = win->createWindow("TaharezLook/StaticText", "Root/City/StatsLabel" );
+	m_pStatsLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );
+	m_pStatsLabel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.01, 0)));
+	m_pStatsLabel->setText("Your character");
+	m_pStatsLabel->setAlpha(64);
+	m_pCity->addChildWindow(m_pStatsLabel);
+
+	m_pCharacterWindow = win->createWindow("TaharezLook/StaticText", "Root/City/CharacterWindow" );
+	m_pCharacterWindow->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.20, 0)) );
+	m_pCharacterWindow->setPosition(CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.05, 0)));
+	m_pCharacterWindow->setAlpha(25);
+	m_pCity->addChildWindow(m_pCharacterWindow);
+
+	m_pItemLabel = win->createWindow("TaharezLook/StaticText", "Root/City/ItemLabel" );
+	m_pItemLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );
+	m_pItemLabel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.50, 0)));
+	m_pItemLabel->setText("Selected item");
+	m_pItemLabel->setAlpha(64);
+	m_pCity->addChildWindow(m_pItemLabel);
+
+	m_pItemWindow = win->createWindow("TaharezLook/StaticText", "Root/City/ItemWindow" );
+	m_pItemWindow->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.20, 0)) );
+	m_pItemWindow->setPosition(CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.54, 0)));
+	m_pItemWindow->setText("THE SWORD OF ABSOLUTE TRUTH\n+5 ATP\nValue: 3500 Gold");
+	m_pItemWindow->setAlpha(25);
+	m_pCity->addChildWindow(m_pItemWindow);
+
+	m_pBuySellSelected = win->createWindow("TaharezLook/Button", "Root/City/BuySellButton");
+	m_pBuySellSelected->setText("Buy item");
+	m_pBuySellSelected->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.04, 0)));
+	m_pBuySellSelected->setPosition(CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.75, 0)));
+	m_pBuySellSelected->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::BuySellItem, this));
+	m_pCity->addChildWindow(m_pBuySellSelected);
+
+	m_pEquipDequipSelected = win->createWindow("TaharezLook/Button", "Root/City/EquipDequipButton");
+	m_pEquipDequipSelected->setText("Equip item");
+	m_pEquipDequipSelected->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.04, 0)));
+	m_pEquipDequipSelected->setPosition(CEGUI::UVector2(CEGUI::UDim(0.50, 0), CEGUI::UDim(0.75, 0)));
+	m_pEquipDequipSelected->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::EquipDequipItem, this));
+	m_pCity->addChildWindow(m_pEquipDequipSelected);
 
 	m_pMainmenu->setVisible(false);
 	ShowCity();
