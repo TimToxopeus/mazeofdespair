@@ -1,3 +1,4 @@
+#pragma warning(disable : 4018)
 /************************************************************************************
 *	Assignment 5 - The maze of despair												*
 *	Tim Toxopeus - 3206947															*
@@ -710,4 +711,92 @@ void CGameEngine::NextLevel()
 
 	m_iTorchCount += m_iLevel;
 	m_iLevel += 1;
+}
+
+void CGameEngine::ShowCity()
+{
+	CEGUI::WindowManager *win = CEGUI::WindowManager::getSingletonPtr();
+	vector<CItem *> inventory = m_pPlayer->GetInventory();
+	vector<CItem *> equipment = m_pPlayer->GetEquipment();
+
+	// Reset old information
+	if ( m_pInventory )
+	{
+		m_pCity->removeChildWindow( m_pInventory );
+		win->destroyWindow( m_pInventory );
+		m_pInventory = NULL;
+	}
+	if ( m_pEquipment )
+	{
+		m_pCity->removeChildWindow( m_pEquipment );
+		win->destroyWindow( m_pEquipment );
+		m_pEquipment = NULL;
+	}
+	if ( m_pItems )
+	{
+		m_pCity->removeChildWindow( m_pItems );
+		win->destroyWindow( m_pItems );
+		m_pItems = NULL;
+	}
+	if ( m_pCityItems.size() > 0 )
+	{
+		for ( int a = 0; a<m_pCityItems.size(); a++ )
+			delete m_pCityItems[a];
+		m_pCityItems.clear();
+	}
+
+	// Create inventory, equipment and items panels
+	m_pEquipment = win->createWindow("TaharezLook/Listbox", "Root/Equipped");
+	m_pEquipment->setSize( CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.45, 0)) );
+	m_pEquipment->setPosition(CEGUI::UVector2(CEGUI::UDim(0.10, 0), CEGUI::UDim(0.03, 0)));
+	m_pEquipment->setAlpha(25);
+	m_pCity->addChildWindow(m_pEquipment);
+
+	m_pInventory = win->createWindow("TaharezLook/Listbox", "Root/Inventory");
+	m_pInventory->setSize( CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.45, 0)) );
+	m_pInventory->setPosition(CEGUI::UVector2(CEGUI::UDim(0.10, 0), CEGUI::UDim(0.52, 0)));
+	m_pInventory->setAlpha(25);
+	m_pCity->addChildWindow(m_pInventory);
+
+	m_pItems = win->createWindow("TaharezLook/Listbox", "Root/City/Items");
+	m_pItems->setSize( CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.94, 0)) );
+	m_pItems->setPosition(CEGUI::UVector2(CEGUI::UDim(0.55, 0), CEGUI::UDim(0.03, 0)));
+	m_pItems->setAlpha(25);
+	m_pCity->addChildWindow(m_pItems);
+
+	// Populate bars with items
+	for ( int a = 0; a<inventory.size(); a++ )
+	{
+		CItem *pItem = inventory[a];
+
+		string buttonName = "Root/City/Inventory/Button" + itoa2(a);
+		CEGUI::Window *m_pItemButton = win->createWindow("TaharezLook/Button", buttonName);
+		m_pItemButton->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.09, 0)) );
+		m_pItemButton->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.01 + (a * 0.10),0)) );
+		m_pItemButton->setText(pItem->GetName());
+		m_pInventory->addChildWindow(m_pItemButton);
+	}
+	for ( int a = 0; a<equipment.size(); a++ )
+	{
+		CItem *pItem = equipment[a];
+
+		string buttonName = "Root/City/Equipment/Button" + itoa2(a);
+		CEGUI::Window *m_pItemButton = win->createWindow("TaharezLook/Button", buttonName);
+		m_pItemButton->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.09, 0)) );
+		m_pItemButton->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.01 + (a * 0.10),0)) );
+		m_pItemButton->setText(pItem->GetName());
+		m_pEquipment->addChildWindow(m_pItemButton);
+	}
+	for ( int a = 0; a<15; a++ )
+	{
+		CItem *pItem = m_pFactory->GetRandomItem(rand()%10, rand()%10);
+		m_pCityItems.push_back( pItem );
+
+		string buttonName = "Root/City/Items/Button" + itoa2(a);
+		CEGUI::Window *m_pItemButton = win->createWindow("TaharezLook/Button", buttonName);
+		m_pItemButton->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.04, 0)) );
+		m_pItemButton->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.01 + (a * 0.05),0)) );
+		m_pItemButton->setText(pItem->GetName());
+		m_pItems->addChildWindow(m_pItemButton);
+	}
 }
