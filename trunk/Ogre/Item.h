@@ -2,6 +2,10 @@
 
 #include <string>
 
+// Stat value 0 = Attack power
+// Stat value 1 = Defensive power
+// Stat value 2 = Maximum hitpoints
+
 class CItem
 {
 protected:
@@ -26,4 +30,5 @@ public:
 	inline int GetStat() { return m_iStat; }
 	inline int GetBonus() { return m_iBonus; }
 	inline int GetValue() { return m_iValue; }
+	inline std::string GetBonusString() { std::string str; if ( m_iStat == 1 ) str = "Attack power"; else if ( m_iStat == 2 ) str = "Defensive power"; else str = "Hitpoints"; return str; }
 };
