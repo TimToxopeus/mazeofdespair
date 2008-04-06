@@ -69,6 +69,12 @@ void CGameEngine::Clean()
 	}
 	m_pLevelItems.clear();
 
+	for ( int a = 0; a<m_pMonsters.size(); a++ )
+	{
+		delete m_pMonsters[a];
+	}
+	m_pMonsters.clear();
+
 	m_pPrimary->clearScene();
 }
 
@@ -161,6 +167,11 @@ bool CGameEngine::frameStarted(const FrameEvent& evt)
 	{
 		CLevelItem *pItem = m_pLevelItems[a];
 		pItem->frameStarted( evt );
+	}
+	for ( int a = 0; a<m_pMonsters.size(); a++ )
+	{
+		CMonster *pMonster = m_pMonsters[a];
+		pMonster->frameStarted( evt );
 	}
 
 	if ( m_iTorchCount > 0 )
@@ -501,6 +512,18 @@ void CGameEngine::moveCamera()
 				delete pActualItem;
 				break;
 			}
+		}
+	}
+
+	// Loop through monsters to check if we need to start combat
+	for ( int i = 0; i<m_pMonsters.size(); i++ )
+	{
+		CMonster *pMonster = m_pMonsters[i];
+		if ( pMonster->getTileX() == clippedX && pMonster->getTileY() == clippedY )
+		{
+			// Start combat!
+			// Player: m_pPlayer
+			// Combatant: pMonster
 		}
 	}
 

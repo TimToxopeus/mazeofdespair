@@ -11,6 +11,7 @@ using namespace std;
 #include "Door.h"
 #include "Key.h"
 #include "Item.h"
+#include "Combatant.h"
 
 // Convert an integer into a std::string object
 std::string itoa2(const int x)
@@ -42,6 +43,7 @@ void CGenerator::CleanUp()
 void CGenerator::GenerateMaze( int w, int h )
 {
 	vector<tile *> deadends;
+	vector<tile *> crossings;
 	this->w = w;
 	this->h = h;
 
@@ -156,6 +158,15 @@ void CGenerator::GenerateMaze( int w, int h )
 			if ( tiles[i].openSides() == 1 )
 			{
 				deadends.push_back(&tiles[i]);
+			}
+		}
+
+		// Obtain all crossings, that's 3-ways and 4-ways
+		for ( int i = 0; i<w*h; i++ )
+		{
+			if ( tiles[i].openSides() >= 3 )
+			{
+				crossings.push_back(&tiles[i]);
 			}
 		}
 	}
@@ -273,6 +284,16 @@ void CGenerator::GenerateMaze( int w, int h )
 		// Otherwise flag it for itemization
 		if ( deadends[a]->camera == false && deadends[a]->door == false && deadends[a]->key == false && deadends[a]->light == false )
 			deadends[a]->item = true;
+	}
+
+	// Add monsters
+	for ( int a = 0; a<crossings.size(); a++ )
+	{
+		// 50% at monster spawn
+		if ( (rand()%100 + 1) > 50 )
+		{
+			crossings[a]->monster = true;
+		}
 	}
 }
 
@@ -403,6 +424,25 @@ void CGenerator::BuildLevel( SceneManager *pManager, Camera *pCamera )
 			Ogre::LogManager::getSingleton().logMessage("Adding an item on " + itoa2(tiles[i].x) + "," + itoa2(tiles[i].y));
 			CLevelItem *pItem = new CLevelItem( ent1, node, tiles[i].x, tiles[i].y );
 			CGameEngine::Instance()->AddItem( pItem );
+		}
+		if ( tiles[i].monster )
+		{
+			string name = "monster";
+			name += itoa2(i);
+
+			Entity *ent1 = pManager->createEntity( name.c_str(), "athene.mesh" );
+			ent1->setCastShadows(true);
+
+			name += "_Node";
+
+			SceneNode *node = pManager->getRootSceneNode()->createChildSceneNode( name.c_str() );
+			node->attachObject( ent1 );
+			node->translate( Vector3(x, 0, y) );
+			node->scale( Vector3( 0.5, 0.5, 0.5 ) );
+
+			Ogre::LogManager::getSingleton().logMessage("Adding a monster on " + itoa2(tiles[i].x) + "," + itoa2(tiles[i].y));
+			CMonster *pMonster = new CMonster( ent1, node, tiles[i].x, tiles[i].y );
+			CGameEngine::Instance()->AddMonster( pMonster );
 		}
 	}
 
