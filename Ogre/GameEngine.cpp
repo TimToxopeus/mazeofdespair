@@ -242,7 +242,11 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 		if ( m_pCity->isVisible() )
 		{
 			m_pCity->setVisible( false );
-			m_pAdventureMode->setVisible( false );
+			m_pEasyLevel->setVisible( false );
+			m_pMediumLevel->setVisible( false );
+			m_pHardLevel->setVisible( false );
+			m_pChallengingLevel->setVisible( false );
+			m_pImpossibleLevel->setVisible( false );
 			m_pMainmenu->setVisible( true );
 			m_bHadCityOpen = true;
 		}
@@ -258,7 +262,11 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 				{
 					m_pMainmenu->setVisible( false );
 					m_pCity->setVisible( true );
-					m_pAdventureMode->setVisible( true );
+					m_pEasyLevel->setVisible( true );
+					m_pMediumLevel->setVisible( true );
+					m_pHardLevel->setVisible( true );
+					m_pChallengingLevel->setVisible( true );
+					m_pImpossibleLevel->setVisible( true );
 				}
 				else
 					return false;
@@ -662,7 +670,11 @@ bool CGameEngine::LoadLevel( const CEGUI::EventArgs &e )
 	m_iTorchCount = 0;
 
 	m_pCity->setVisible( false );
-	m_pAdventureMode->setVisible( false );
+	m_pEasyLevel->setVisible( false );
+	m_pMediumLevel->setVisible( false );
+	m_pHardLevel->setVisible( false );
+	m_pChallengingLevel->setVisible( false );
+	m_pImpossibleLevel->setVisible( false );
 	m_pMainmenu->setVisible(false);
 	m_pCounterbox->setVisible(false);
 	CEGUI::MouseCursor::getSingleton().setVisible(true);
@@ -691,12 +703,31 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 {
 	m_iLevel = 0;
 	m_iTorchCount = 10;
+
+	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
+	CEGUI::String senderID = we.window->getName();
+
+	if ( senderID.find("Easy") != CEGUI::String::npos )
+		m_iLevel = 1;
+	if ( senderID.find("Medium") != CEGUI::String::npos )
+		m_iLevel = 2;
+	if ( senderID.find("Hard") != CEGUI::String::npos )
+		m_iLevel = 3;
+	if ( senderID.find("Challenging") != CEGUI::String::npos )
+		m_iLevel = 5;
+	if ( senderID.find("Impossible") != CEGUI::String::npos )
+		m_iLevel = 7;
+
 	NextLevel(e);
 
 	m_bInAdventureMode = true;
 	m_bDisplayedSwitchTip = false;
 	m_pCity->setVisible( false );
-	m_pAdventureMode->setVisible( false );
+	m_pEasyLevel->setVisible( false );
+	m_pMediumLevel->setVisible( false );
+	m_pHardLevel->setVisible( false );
+	m_pChallengingLevel->setVisible( false );
+	m_pImpossibleLevel->setVisible( false );
 
 	m_pMessageBox->setVisible( true );
 	m_pMessageBoxText->setText("In adventure mode you have to defeat the ninja before going insane.\nWhen you run out of torches you will slowly lose your mind in the dark!");
@@ -724,7 +755,11 @@ bool CGameEngine::NextLevel( const CEGUI::EventArgs &e )
 	m_pMainmenu->setVisible(false);
 	m_pCounterbox->setVisible(true);
 	m_pCity->setVisible( false );
-	m_pAdventureMode->setVisible( false );
+	m_pEasyLevel->setVisible( false );
+	m_pMediumLevel->setVisible( false );
+	m_pHardLevel->setVisible( false );
+	m_pChallengingLevel->setVisible( false );
+	m_pImpossibleLevel->setVisible( false );
 	CEGUI::MouseCursor::getSingleton().setVisible(true);
 
 	keylights = m_pMapLoader->LoadMap( itoa2(m_iLevel + 5), m_pPrimary, m_pCamera, true );

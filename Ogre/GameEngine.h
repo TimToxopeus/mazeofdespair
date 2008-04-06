@@ -106,7 +106,11 @@ private:
 	// Window objects for all the menu's and bars.
 	CEGUI::Window *m_pSheet;
 	CEGUI::Window *m_pCity;
-	CEGUI::Window *m_pAdventureMode;
+	CEGUI::Window *m_pEasyLevel;
+	CEGUI::Window *m_pMediumLevel;
+	CEGUI::Window *m_pHardLevel;
+	CEGUI::Window *m_pChallengingLevel;
+	CEGUI::Window *m_pImpossibleLevel;
 	CEGUI::Window *m_pItems;
 	CEGUI::Window *m_pEquipment;
 	CEGUI::Window *m_pInventory;
@@ -178,6 +182,7 @@ public:
 	void AddKey( CKey *pKey ) { m_pKeys.push_back( pKey ); }
 	void AddSwitch( CSwitch *pSwitch ) { m_pSwitches.push_back( pSwitch ); }
 	SceneManager *GetSceneManager() { return m_pPrimary; }
+	CDoor *GetDoor( int index ) { if ( index >= 0 && index < m_pDoors.size() ) return m_pDoors[index]; return NULL; }
 
 	// GUI
 	CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID);

@@ -354,8 +354,20 @@ bool CMapLoader::hasCube(Ogre::Vector3 position, bool ignoreNinja)
 		if ( clippedY >= 0 && clippedY < h )
 		{
 			// The camera cannot move through an unlocked door
-			if ( clippedX == ninjaX && clippedY == ninjaY && pDoor->IsUnlocked() == false && !ignoreNinja )
-				return true;
+			if ( clippedX == ninjaX && clippedY == ninjaY )
+			{
+				if ( pDoor )
+				{
+					if ( pDoor->IsUnlocked() == false && !ignoreNinja )
+						return true;
+				}
+				else
+				{
+					pDoor = CGameEngine::Instance()->GetDoor(0);
+					if ( pDoor->IsUnlocked() == false && !ignoreNinja )
+						return true;
+				}
+			}
 
 			// Check all cubes, if there is a cube in the specified position return true
 			for ( int a = 0; a<cubes.size(); a++ )

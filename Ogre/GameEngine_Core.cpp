@@ -264,12 +264,40 @@ bool CGameEngine::Init()
 	m_pCity->setProperty("Image", CEGUI::PropertyHelper::imageToString(&imageSet->getImage((CEGUI::utf8*)"stad.jpg")));
 	m_pSheet->addChildWindow(m_pCity);
 
-	m_pAdventureMode = win->createWindow("TaharezLook/Button", "Root/Adventure Mode");
-	m_pAdventureMode->setText("Start adventuring");
-	m_pAdventureMode->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.08, 0)));
-	m_pAdventureMode->setPosition(CEGUI::UVector2(CEGUI::UDim(0.05, 0), CEGUI::UDim(0.90, 0)));
-	m_pAdventureMode->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
-	m_pSheet->addChildWindow(m_pAdventureMode);
+	m_pEasyLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Easy");
+	m_pEasyLevel->setText("Easy dungeon");
+	m_pEasyLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
+	m_pEasyLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.05, 0), CEGUI::UDim(0.91, 0)));
+	m_pEasyLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
+	m_pSheet->addChildWindow(m_pEasyLevel);
+
+	m_pMediumLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Medium");
+	m_pMediumLevel->setText("Medium dungeon");
+	m_pMediumLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
+	m_pMediumLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.24, 0), CEGUI::UDim(0.91, 0)));
+	m_pMediumLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
+	m_pSheet->addChildWindow(m_pMediumLevel);
+
+	m_pHardLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Hard");
+	m_pHardLevel->setText("Hard dungeon");
+	m_pHardLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
+	m_pHardLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.43, 0), CEGUI::UDim(0.91, 0)));
+	m_pHardLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
+	m_pSheet->addChildWindow(m_pHardLevel);
+
+	m_pChallengingLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Challenging");
+	m_pChallengingLevel->setText("Challenging dungeon");
+	m_pChallengingLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
+	m_pChallengingLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.62, 0), CEGUI::UDim(0.91, 0)));
+	m_pChallengingLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
+	m_pSheet->addChildWindow(m_pChallengingLevel);
+
+	m_pImpossibleLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Impossible");
+	m_pImpossibleLevel->setText("Impossible dungeon");
+	m_pImpossibleLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
+	m_pImpossibleLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.91, 0)));
+	m_pImpossibleLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
+	m_pSheet->addChildWindow(m_pImpossibleLevel);
 
 	CEGUI::Window *m_pEquipmentLabel = win->createWindow("TaharezLook/StaticText", "Root/City/EquipmentLabel" );
 	m_pEquipmentLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );
