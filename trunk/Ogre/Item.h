@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include "Ogre.h"
+using namespace Ogre;
 
 // Stat value 0 = Attack power
 // Stat value 1 = Defensive power
@@ -31,4 +33,22 @@ public:
 	inline int GetBonus() { return m_iBonus; }
 	inline int GetValue() { return m_iValue; }
 	inline std::string GetBonusString() { std::string str; if ( m_iStat == 0 ) str = "Attack power"; else if ( m_iStat == 1 ) str = "Defensive power"; else str = "Hitpoints"; return str; }
+};
+
+class CLevelItem
+{
+private:
+	Entity *m_pEntity;
+	SceneNode *m_pNode;
+	int m_iTileX, m_iTileY;
+
+public:
+	CLevelItem( Entity *pEntity, SceneNode *pNode, int iTileX, int iTileY );
+	bool frameStarted( const FrameEvent &evt );
+	SceneNode* getSceneNode();
+
+	int getTileX() { return m_iTileX; }
+	int getTileY() { return m_iTileY; }
+	Entity *getEntity() { return m_pEntity; }
+	SceneNode *getNode() { return m_pNode; }
 };

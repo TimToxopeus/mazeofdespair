@@ -98,6 +98,7 @@ private:
 	std::vector<CKey *> m_pKeys;
 	std::vector<CSwitch *> m_pSwitches;
 	std::vector<CItem *> m_pCityItems;
+	std::vector<CLevelItem *> m_pLevelItems;
 
 	// CEGUI
 	CEGUI::System *m_pGUISystem;
@@ -181,6 +182,7 @@ public:
 	void AddDoor( CDoor *pDoor ) { m_pDoors.push_back( pDoor ); }
 	void AddKey( CKey *pKey ) { m_pKeys.push_back( pKey ); }
 	void AddSwitch( CSwitch *pSwitch ) { m_pSwitches.push_back( pSwitch ); }
+	void AddItem( CLevelItem *pItem ) { m_pLevelItems.push_back( pItem ); }
 	SceneManager *GetSceneManager() { return m_pPrimary; }
 	CDoor *GetDoor( int index ) { if ( index >= 0 && index < m_pDoors.size() ) return m_pDoors[index]; return NULL; }
 

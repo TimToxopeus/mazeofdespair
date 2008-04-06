@@ -10,6 +10,7 @@ using namespace std;
 #include "GameEngine.h"
 #include "Door.h"
 #include "Key.h"
+#include "Item.h"
 
 // Convert an integer into a std::string object
 std::string itoa2(const int x)
@@ -264,6 +265,15 @@ void CGenerator::GenerateMaze( int w, int h )
 	deadends[top[choice].end]->door = true;
 	deadends[top[choice].key]->key = true;
 	deadends[top[choice].light]->light = true;
+
+	// Add items
+	for ( int a = 0; a<deadends.size(); a++ )
+	{
+		// Skip a deadend if it already has an assigned object
+		// Otherwise flag it for itemization
+		if ( deadends[a]->camera == false && deadends[a]->door == false && deadends[a]->key == false && deadends[a]->light == false )
+			deadends[a]->item = true;
+	}
 }
 
 void CGenerator::BuildLevel( SceneManager *pManager, Camera *pCamera )
@@ -321,6 +331,7 @@ void CGenerator::BuildLevel( SceneManager *pManager, Camera *pCamera )
 		if ( tiles[i].camera )
 		{
 			pCamera->setPosition( x, 0, y );
+			Ogre::LogManager::getSingleton().logMessage("Setting starting position at " + itoa2(tiles[i].x) + "," + itoa2(tiles[i].y));
 		}
 		if ( tiles[i].key )
 		{
@@ -335,6 +346,7 @@ void CGenerator::BuildLevel( SceneManager *pManager, Camera *pCamera )
 			keyX = tiles[i].x;
 			keyY = tiles[i].y;
 
+			Ogre::LogManager::getSingleton().logMessage("Adding a key on " + itoa2(tiles[i].x) + "," + itoa2(tiles[i].y));
 			CKey *pKey = new CKey( ent1, node );
 			CGameEngine::Instance()->AddKey( pKey );
 		}
@@ -351,6 +363,7 @@ void CGenerator::BuildLevel( SceneManager *pManager, Camera *pCamera )
 			ninjaX = tiles[i].x;
 			ninjaY = tiles[i].y;
 
+			Ogre::LogManager::getSingleton().logMessage("Adding a ninja on " + itoa2(tiles[i].x) + "," + itoa2(tiles[i].y));
 			CDoor *pDoor = new CDoor( ent1, node );
 			CGameEngine::Instance()->AddDoor( pDoor );
 		}
@@ -368,8 +381,28 @@ void CGenerator::BuildLevel( SceneManager *pManager, Camera *pCamera )
 			lightX = tiles[i].x;
 			lightY = tiles[i].y;
 
+			Ogre::LogManager::getSingleton().logMessage("Adding a switch on " + itoa2(tiles[i].x) + "," + itoa2(tiles[i].y));
 			CSwitch *pSwitch = new CSwitch( ent1, node );
 			CGameEngine::Instance()->AddSwitch( pSwitch );
+		}
+		if ( tiles[i].item )
+		{
+			string name = "item";
+			name += itoa2(i);
+
+			Entity *ent1 = pManager->createEntity( name.c_str(), "barrel.mesh" );
+			ent1->setCastShadows(true);
+
+			name += "_Node";
+
+			SceneNode *node = pManager->getRootSceneNode()->createChildSceneNode( name.c_str() );
+			node->attachObject( ent1 );
+			node->translate( Vector3(x, -20, y) );
+			node->scale( Vector3( 3, 3, 3 ) );
+
+			Ogre::LogManager::getSingleton().logMessage("Adding an item on " + itoa2(tiles[i].x) + "," + itoa2(tiles[i].y));
+			CLevelItem *pItem = new CLevelItem( ent1, node, tiles[i].x, tiles[i].y );
+			CGameEngine::Instance()->AddItem( pItem );
 		}
 	}
 
