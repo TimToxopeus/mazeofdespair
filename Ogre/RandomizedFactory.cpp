@@ -55,5 +55,13 @@ CItem *CRandomizedFactory::GetRandomItem( int iSlot, int iLevel )
 
 CCombatant *CRandomizedFactory::GetRandomMonster( int iLevel )
 {
-	return NULL;
+	string name = GetRandomMonsterName();
+	int iGold, iATP, iDef, iHP;
+	iGold = rand()%(iLevel * 10);
+	iATP = (rand()%(iLevel * 5) + 1) * 2;
+	iDef = (rand()%(iLevel * 5) + 1) * 2;
+	iHP = (rand()%(iLevel * 5) + 1) * 5;
+
+	CCombatant *pMonster = new CCombatant( name, iGold, iATP, iDef, iHP );
+	return pMonster;
 }
