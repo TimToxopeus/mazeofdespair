@@ -63,6 +63,12 @@ void CGameEngine::Clean()
 	}
 	m_pSwitches.clear();
 
+	for ( int a = 0; a<m_pLevelItems.size(); a++ )
+	{
+		delete m_pLevelItems[a];
+	}
+	m_pLevelItems.clear();
+
 	m_pPrimary->clearScene();
 }
 
@@ -151,6 +157,11 @@ bool CGameEngine::frameStarted(const FrameEvent& evt)
 		CSwitch *pSwitch = m_pSwitches[a];
 		pSwitch->frameStarted( evt );
 	}
+	for ( int a = 0; a<m_pLevelItems.size(); a++ )
+	{
+		CLevelItem *pItem = m_pLevelItems[a];
+		pItem->frameStarted( evt );
+	}
 
 	if ( m_iTorchCount > 0 )
 	{
@@ -233,8 +244,15 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 
 	if(m_pKeyboard->isKeyDown(KC_RETURN) && m_bLevelComplete )
 	{
-		CEGUI::EventArgs e;
-		NextLevel(e);
+		Clean();
+		m_pInsanityBar->setVisible( false );
+		m_pCity->setVisible( true );
+		m_pEasyLevel->setVisible( true );
+		m_pMediumLevel->setVisible( true );
+		m_pHardLevel->setVisible( true );
+		m_pChallengingLevel->setVisible( true );
+		m_pImpossibleLevel->setVisible( true );
+		ShowCity();
 	}
 
 	if( m_pKeyboard->isKeyDown(KC_ESCAPE) && m_fTimeUntilNextToggle <= 0 )
@@ -274,7 +292,22 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 		}
 		else
 		{
-			m_pMainmenu->setVisible(true);
+			if ( m_bInAdventureMode )
+			{
+				Clean();
+				m_pInsanityBar->setVisible( false );
+				m_pCity->setVisible( true );
+				m_pEasyLevel->setVisible( true );
+				m_pMediumLevel->setVisible( true );
+				m_pHardLevel->setVisible( true );
+				m_pChallengingLevel->setVisible( true );
+				m_pImpossibleLevel->setVisible( true );
+				ShowCity();
+			}
+			else
+			{
+				m_pMainmenu->setVisible(true);
+			}
 			m_pMouse->setBuffered(true);
 			CEGUI::MouseCursor::getSingleton().setVisible(true);
 		}
@@ -431,6 +464,43 @@ void CGameEngine::moveCamera()
 		{
 			m_pCamera->setPosition(pos);
 			m_pCamera->moveRelative(m_vTranslateVector);
+		}
+	}
+
+	// Check if we are on top of an item and if we can pick it up
+	int clippedX, clippedY; // Clip camera position
+	Vector3 position = m_pCamera->getPosition();
+	clippedX = (((position.x + 50 - (((int)position.x + 50) % 100)) / 100) - 1) / 3;
+	clippedY = (((position.z + 50 - (((int)position.z + 50) % 100)) / 100) - 1) / 3;
+
+	for ( int i = 0; i<m_pLevelItems.size(); i++ )
+	{
+		CLevelItem *pItem = m_pLevelItems[i];
+		if ( pItem->getTileX() == clippedX && pItem->getTileY() == clippedY )
+		{
+			CItem *pActualItem = m_pFactory->GetRandomItem(rand()%10, m_iLevel);
+			if ( m_pPlayer->AddItemToInventory( pActualItem ) )
+			{
+				string text = "You have picked up an item!\nName:" + pActualItem->GetName() + "\nBonus: +" + itoa2(pActualItem->GetBonus()) + " " + pActualItem->GetBonusString() + "\nValue: " + itoa2(pActualItem->GetValue()) + " goldpieces";
+				m_pMessageBox->setVisible( true );
+				m_pMessageBoxText->setText(text.c_str());
+				m_fMessageTime = 5;
+
+				// Remove item from level
+				m_pPrimary->destroyEntity( pItem->getEntity() );
+				m_pPrimary->getRootSceneNode()->removeChild(pItem->getNode());
+				delete m_pLevelItems[i];
+				m_pLevelItems.erase( m_pLevelItems.begin() + i );
+				break;
+			}
+			else
+			{
+				m_pMessageBox->setVisible( true );
+				m_pMessageBoxText->setText("Your inventory is too full! Too bad!\n");
+				m_fMessageTime = 3;
+				delete pActualItem;
+				break;
+			}
 		}
 	}
 
@@ -707,6 +777,7 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
 	CEGUI::String senderID = we.window->getName();
 
+	Ogre::LogManager::getSingleton().logMessage("Adventure mode started by: " + string(senderID.c_str()) );
 	if ( senderID.find("Easy") != CEGUI::String::npos )
 		m_iLevel = 1;
 	if ( senderID.find("Medium") != CEGUI::String::npos )
@@ -718,20 +789,35 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 	if ( senderID.find("Impossible") != CEGUI::String::npos )
 		m_iLevel = 7;
 
-	NextLevel(e);
+	if ( m_iLevel != 0 )
+	{
+		NextLevel(e);
 
-	m_bInAdventureMode = true;
-	m_bDisplayedSwitchTip = false;
-	m_pCity->setVisible( false );
-	m_pEasyLevel->setVisible( false );
-	m_pMediumLevel->setVisible( false );
-	m_pHardLevel->setVisible( false );
-	m_pChallengingLevel->setVisible( false );
-	m_pImpossibleLevel->setVisible( false );
+		m_bInAdventureMode = true;
+		m_bDisplayedSwitchTip = false;
+		m_pCity->setVisible( false );
+		m_pEasyLevel->setVisible( false );
+		m_pMediumLevel->setVisible( false );
+		m_pHardLevel->setVisible( false );
+		m_pChallengingLevel->setVisible( false );
+		m_pImpossibleLevel->setVisible( false );
 
-	m_pMessageBox->setVisible( true );
-	m_pMessageBoxText->setText("In adventure mode you have to defeat the ninja before going insane.\nWhen you run out of torches you will slowly lose your mind in the dark!");
-	m_fMessageTime = 10;
+		m_pMessageBox->setVisible( true );
+		m_pMessageBoxText->setText("In adventure mode you have to defeat the ninja before going insane.\nWhen you run out of torches you will slowly lose your mind in the dark!");
+		m_fMessageTime = 10;
+	}
+	else
+	{
+		Ogre::LogManager::getSingleton().logMessage("Pre-clean");
+		Clean();
+		Load();
+		Ogre::LogManager::getSingleton().logMessage("Post-clean");
+		m_pMessageBox->setVisible( false );
+		m_pMainmenu->setVisible( false );
+		Ogre::LogManager::getSingleton().logMessage("Pre-city");
+		ShowCity();
+		Ogre::LogManager::getSingleton().logMessage("Post-city");
+	}
 
 	return true;
 }
@@ -785,6 +871,13 @@ void CGameEngine::ShowCity(bool refreshShop)
 								"\nAttack power: " + itoa2(m_pPlayer->GetATP()) + 
 								"\nDefensive power: " + itoa2(m_pPlayer->GetDef()) + 
 								"\nGold: " + itoa2(m_pPlayer->GetGold()) + " goldpieces");
+
+	m_pCity->setVisible( true );
+	m_pEasyLevel->setVisible( true );
+	m_pMediumLevel->setVisible( true );
+	m_pHardLevel->setVisible( true );
+	m_pChallengingLevel->setVisible( true );
+	m_pImpossibleLevel->setVisible( true );
 
 	m_iSelectedType = m_iSelectedIndex = 0;
 	m_pItemLabel->setVisible( false );

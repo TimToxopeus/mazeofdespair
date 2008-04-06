@@ -159,31 +159,6 @@ bool CGameEngine::Init()
 	m_pPlayer = new CPlayer();
 	m_pFactory = new CRandomizedFactory();
 
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(0,1) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(1,2) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(2,3) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(3,4) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(4,5) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(6,7) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(7,8) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(8,9) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(9,10) );
-
-	for ( int i = 0; i<10; i++ )
-		m_pPlayer->EquipItemFromInventory( 0 );
-
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(0,1) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(1,2) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(2,3) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(3,4) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(4,5) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(5,6) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(6,7) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(7,8) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(8,9) );
-	m_pPlayer->AddItemToInventory( m_pFactory->GetRandomItem(9,10) );
-
 	// GUI for the primary scenemanager
 	m_pGUIRenderer = new CEGUI::OgreCEGUIRenderer(m_pWindow, Ogre::RENDER_QUEUE_OVERLAY, false, 3000, m_pPrimary);
 	m_pGUISystem = new CEGUI::System(m_pGUIRenderer);
@@ -286,14 +261,14 @@ bool CGameEngine::Init()
 	m_pSheet->addChildWindow(m_pHardLevel);
 
 	m_pChallengingLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Challenging");
-	m_pChallengingLevel->setText("Challenging dungeon");
+	m_pChallengingLevel->setText("Crazy dungeon");
 	m_pChallengingLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
 	m_pChallengingLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.62, 0), CEGUI::UDim(0.91, 0)));
 	m_pChallengingLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
 	m_pSheet->addChildWindow(m_pChallengingLevel);
 
 	m_pImpossibleLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Impossible");
-	m_pImpossibleLevel->setText("Impossible dungeon");
+	m_pImpossibleLevel->setText("Insane dungeon");
 	m_pImpossibleLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
 	m_pImpossibleLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.91, 0)));
 	m_pImpossibleLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
@@ -361,8 +336,12 @@ bool CGameEngine::Init()
 	m_pEquipDequipSelected->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::EquipDequipItem, this));
 	m_pCity->addChildWindow(m_pEquipDequipSelected);
 
-	m_pMainmenu->setVisible(false);
-	ShowCity();
+	m_pCity->setVisible( false );
+	m_pEasyLevel->setVisible( false );
+	m_pMediumLevel->setVisible( false );
+	m_pHardLevel->setVisible( false );
+	m_pChallengingLevel->setVisible( false );
+	m_pImpossibleLevel->setVisible( false );
 
 	// Set gui system
 	m_pGUISystem->setGUISheet(m_pSheet);
