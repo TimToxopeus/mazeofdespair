@@ -10,13 +10,14 @@
 class tile
 {
 public:
-	tile() { u = d = l = r = 1; camera = key = door = light = item = false; }
+	tile() { u = d = l = r = 1; camera = key = door = light = item = monster = false; }
 	int u, d, l, r, x, y, i;
 	bool camera;
 	bool key;
 	bool door;
 	bool light;
 	bool item;
+	bool monster;
 	bool fullyIntact() { if ( u == d && u == l && u == r && u == 1 ) return true; return false; }
 	void setXY( int x, int y ) { this->x = x; this->y = y; }
 

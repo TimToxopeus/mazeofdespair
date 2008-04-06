@@ -27,3 +27,20 @@ public:
 	virtual int GetATP() { return m_iAttackPower; }
 	virtual int GetDef() { return m_iDefense; }
 };
+
+class CMonster
+{
+private:
+	Entity *m_pEntity;
+	SceneNode *m_pNode;
+	int m_iTileX, m_iTileY;
+
+public:
+	CMonster( Entity *pEntity, SceneNode *pNode, int iTileX, int iTileY );
+	bool frameStarted( const FrameEvent &evt );
+
+	int getTileX() { return m_iTileX; }
+	int getTileY() { return m_iTileY; }
+	Entity *getEntity() { return m_pEntity; }
+	SceneNode *getNode() { return m_pNode; }
+};

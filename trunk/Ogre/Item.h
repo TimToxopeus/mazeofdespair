@@ -45,7 +45,6 @@ private:
 public:
 	CLevelItem( Entity *pEntity, SceneNode *pNode, int iTileX, int iTileY );
 	bool frameStarted( const FrameEvent &evt );
-	SceneNode* getSceneNode();
 
 	int getTileX() { return m_iTileX; }
 	int getTileY() { return m_iTileY; }
