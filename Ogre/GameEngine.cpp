@@ -521,9 +521,10 @@ void CGameEngine::moveCamera()
 		CMonster *pMonster = m_pMonsters[i];
 		if ( pMonster->getTileX() == clippedX && pMonster->getTileY() == clippedY )
 		{
+			CCombatant *pActualMonster = m_pFactory->GetRandomMonster(m_iLevel);
 			// Start combat!
 			// Player: m_pPlayer
-			// Combatant: pMonster
+			// Combatant: pActualMonster
 		}
 	}
 
