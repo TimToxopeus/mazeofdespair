@@ -91,6 +91,7 @@ private:
 	bool m_bInAdventureMode;				// If the player is in adventure mode, this boolean is true.
 	bool m_bLevelComplete;					// The boolean for completing a level. 
 	bool m_bDisplayedSwitchTip;				// The boolean for displaying the light switch tip in tutorial mode. 
+	bool m_bMapVisible;						// The boolean for displaying the map
 
 	CPlayer *m_pPlayer;
 	CRandomizedFactory *m_pFactory;
@@ -120,6 +121,7 @@ private:
 	CEGUI::OgreCEGUIRenderer *m_pGUIRenderer;
 
 	// Window objects for all the menu's and bars.
+	CEGUI::WindowManager *m_pWindowManager;
 	CEGUI::Window *m_pSheet;
 	CEGUI::Window *m_pCity;
 	CEGUI::Window *m_pEasyLevel;
@@ -142,6 +144,8 @@ private:
 	CEGUI::Window *m_pCharacterWindow;
 	CEGUI::Window *m_pBuySellSelected;
 	CEGUI::Window *m_pEquipDequipSelected;
+	CEGUI::Window *m_pMap;
+	CEGUI::Imageset *m_pMapWallSet;
 
 	// Timer for windows.
 	Real m_fMessageTime;

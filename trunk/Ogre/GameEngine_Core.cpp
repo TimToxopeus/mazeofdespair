@@ -48,6 +48,7 @@ CGameEngine::CGameEngine()
 	m_bInAdventureMode = false;
 	m_bDisplayedSwitchTip = false;
 	m_bHadCityOpen = true;
+	m_bMapVisible = false;
 
 	m_pGUIRenderer = NULL;
 	m_pGUISystem = NULL;
@@ -167,56 +168,56 @@ bool CGameEngine::Init()
 	CEGUI::MouseCursor::getSingleton().setImage(CEGUI::System::getSingleton().getDefaultMouseCursor());
 	m_pGUISystem->setDefaultFont((CEGUI::utf8*)"BlueHighway-12");
 
-	CEGUI::WindowManager *win = CEGUI::WindowManager::getSingletonPtr();
-	m_pSheet = win->createWindow("DefaultGUISheet", "Root");
+	m_pWindowManager = CEGUI::WindowManager::getSingletonPtr();
+	m_pSheet = m_pWindowManager->createWindow("DefaultGUISheet", "Root");
 
-	m_pMainmenu = win->createWindow("TaharezLook/FrameWindow", "Root/Mainmenu");
+	m_pMainmenu = m_pWindowManager->createWindow("TaharezLook/FrameWindow", "Root/Mainmenu");
 	m_pMainmenu->setSize( CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.3, 0)) );
 	m_pMainmenu->setPosition( CEGUI::UVector2(CEGUI::UDim(0.35,0), CEGUI::UDim(0.35,0)) );
 	m_pSheet->addChildWindow(m_pMainmenu);
 
-	m_pInsanityBar = (CEGUI::ProgressBar *)win->createWindow("TaharezLook/ProgressBar", "Root/InsanityBar");
+	m_pInsanityBar = (CEGUI::ProgressBar *)m_pWindowManager->createWindow("TaharezLook/ProgressBar", "Root/InsanityBar");
 	m_pInsanityBar->setSize( CEGUI::UVector2(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.03, 0)) );
 	m_pInsanityBar->setPosition( CEGUI::UVector2(CEGUI::UDim(0.2,0), CEGUI::UDim(0.01,0)) );
 	m_pSheet->addChildWindow(m_pInsanityBar);
 
-	m_pMessageBox = win->createWindow("TaharezLook/FrameWindow", "Root/MessageBox");
+	m_pMessageBox = m_pWindowManager->createWindow("TaharezLook/FrameWindow", "Root/MessageBox");
 	m_pMessageBox->setSize( CEGUI::UVector2(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.1, 0)) );
 	m_pMessageBox->setPosition( CEGUI::UVector2(CEGUI::UDim(0.2,0), CEGUI::UDim(0.05,0)) );
 	m_pSheet->addChildWindow(m_pMessageBox);
 
-	m_pMessageBoxText = win->createWindow("TaharezLook/StaticText", "Root/MessageBox/Text" );
+	m_pMessageBoxText = m_pWindowManager->createWindow("TaharezLook/StaticText", "Root/MessageBox/Text" );
 	m_pMessageBoxText->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.7, 0)) );
 	m_pMessageBoxText->setPosition(CEGUI::UVector2(CEGUI::UDim(0.05, 0), CEGUI::UDim(0.25, 0)));
 	m_pMessageBox->addChildWindow(m_pMessageBoxText);
 
-	CEGUI::Window *load = win->createWindow("TaharezLook/Button", "Root/Mainmenu/LoadButton");
+	CEGUI::Window *load = m_pWindowManager->createWindow("TaharezLook/Button", "Root/Mainmenu/LoadButton");
 	load->setText("Tutorial");
 	load->setSize(CEGUI::UVector2(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.2, 0)));
 	load->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.15, 0)));
 	load->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::LoadLevel, this));
 	m_pMainmenu->addChildWindow(load);
 
-	m_pAdventure = win->createWindow("TaharezLook/Button", "Root/Mainmenu/AdventureButton");
+	m_pAdventure = m_pWindowManager->createWindow("TaharezLook/Button", "Root/Mainmenu/AdventureButton");
 	m_pAdventure->setText("Adventure mode");
 	m_pAdventure->setSize(CEGUI::UVector2(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.2, 0)));
 	m_pAdventure->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.45, 0)));
 	m_pAdventure->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
-	m_pAdventure->disable();
+	//m_pAdventure->disable();
 	m_pMainmenu->addChildWindow(m_pAdventure);
 
-	CEGUI::Window *quit = win->createWindow("TaharezLook/Button", "Root/Mainmenu/QuitButton");
+	CEGUI::Window *quit = m_pWindowManager->createWindow("TaharezLook/Button", "Root/Mainmenu/QuitButton");
 	quit->setText("Quit game");
 	quit->setSize(CEGUI::UVector2(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.2, 0)));
 	quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.75, 0)));
 	quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::Quit, this));
 	m_pMainmenu->addChildWindow(quit);
 
-	m_pCounterbox = win->createWindow("TaharezLook/Listbox", "Root/Counter" );
+	m_pCounterbox = m_pWindowManager->createWindow("TaharezLook/Listbox", "Root/Counter" );
 	m_pCounterbox->setSize( CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)) );
 	m_pSheet->addChildWindow(m_pCounterbox);
 
-	m_pTorchescounter = win->createWindow("TaharezLook/StaticText", "Root/Counter/TorchesCounter" );
+	m_pTorchescounter = m_pWindowManager->createWindow("TaharezLook/StaticText", "Root/Counter/TorchesCounter" );
 	m_pTorchescounter->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.8, 0)) );
 	m_pTorchescounter->setPosition(CEGUI::UVector2(CEGUI::UDim(0.05, 0), CEGUI::UDim(0.1, 0)));
 	m_pTorchescounter->setText("Torches: 10");
@@ -226,110 +227,125 @@ bool CGameEngine::Init()
 	m_pMessageBox->setVisible(false);
 	m_pInsanityBar->setVisible(false);
 
+	CEGUI::Texture *cTex = m_pGUIRenderer->createTexture("map2.jpg");
+	CEGUI::Imageset *imageSet = CEGUI::ImagesetManager::getSingleton().createImageset((CEGUI::utf8*)"MapSet", cTex);
+	imageSet->defineImage((CEGUI::utf8*)"map2.jpg", CEGUI::Point(0.0f, 0.0f), CEGUI::Size(cTex->getWidth(), cTex->getHeight()),	CEGUI::Point(0.0f,0.0f));
+
+	m_pMap = m_pWindowManager->createWindow("TaharezLook/StaticImage", "Root/Map");
+	m_pMap->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.8, 0)) );
+	m_pMap->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.1,0)) );
+	m_pMap->setProperty("Image", CEGUI::PropertyHelper::imageToString(&imageSet->getImage((CEGUI::utf8*)"map2.jpg")));
+	m_pSheet->addChildWindow(m_pMap);
+	m_pMap->setVisible( false );
+
+	cTex = m_pGUIRenderer->createTexture("Dirt.jpg");
+	m_pMapWallSet = CEGUI::ImagesetManager::getSingleton().createImageset((CEGUI::utf8*)"WallSet", cTex);
+	m_pMapWallSet->defineImage((CEGUI::utf8*)"Dirt.jpg", CEGUI::Point(0.0f, 0.0f), CEGUI::Size(cTex->getWidth(), cTex->getHeight()),	CEGUI::Point(0.0f,0.0f));
+
 	//======================================================================================================
 	// CITY GUI
 	//======================================================================================================
-	CEGUI::Texture *cTex = m_pGUIRenderer->createTexture("stad.jpg");
-	CEGUI::Imageset *imageSet = CEGUI::ImagesetManager::getSingleton().createImageset((CEGUI::utf8*)"CitySet", cTex);
+	cTex = m_pGUIRenderer->createTexture("stad.jpg");
+	imageSet = CEGUI::ImagesetManager::getSingleton().createImageset((CEGUI::utf8*)"CitySet", cTex);
 	imageSet->defineImage((CEGUI::utf8*)"stad.jpg", CEGUI::Point(0.0f, 0.0f), CEGUI::Size(cTex->getWidth(), cTex->getHeight()),	CEGUI::Point(0.0f,0.0f));
 
-	m_pCity = win->createWindow("TaharezLook/StaticImage", "Root/City");
+	m_pCity = m_pWindowManager->createWindow("TaharezLook/StaticImage", "Root/City");
 	m_pCity->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.8, 0)) );
 	m_pCity->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.1,0)) );
 	m_pCity->setProperty("Image", CEGUI::PropertyHelper::imageToString(&imageSet->getImage((CEGUI::utf8*)"stad.jpg")));
 	m_pSheet->addChildWindow(m_pCity);
 
-	m_pEasyLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Easy");
+	m_pEasyLevel = m_pWindowManager->createWindow("TaharezLook/Button", "Root/Adventure/Easy");
 	m_pEasyLevel->setText("Easy dungeon");
 	m_pEasyLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
 	m_pEasyLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.05, 0), CEGUI::UDim(0.91, 0)));
 	m_pEasyLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
 	m_pSheet->addChildWindow(m_pEasyLevel);
 
-	m_pMediumLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Medium");
+	m_pMediumLevel = m_pWindowManager->createWindow("TaharezLook/Button", "Root/Adventure/Medium");
 	m_pMediumLevel->setText("Medium dungeon");
 	m_pMediumLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
 	m_pMediumLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.24, 0), CEGUI::UDim(0.91, 0)));
 	m_pMediumLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
 	m_pSheet->addChildWindow(m_pMediumLevel);
 
-	m_pHardLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Hard");
+	m_pHardLevel = m_pWindowManager->createWindow("TaharezLook/Button", "Root/Adventure/Hard");
 	m_pHardLevel->setText("Hard dungeon");
 	m_pHardLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
 	m_pHardLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.43, 0), CEGUI::UDim(0.91, 0)));
 	m_pHardLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
 	m_pSheet->addChildWindow(m_pHardLevel);
 
-	m_pChallengingLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Challenging");
+	m_pChallengingLevel = m_pWindowManager->createWindow("TaharezLook/Button", "Root/Adventure/Challenging");
 	m_pChallengingLevel->setText("Crazy dungeon");
 	m_pChallengingLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
 	m_pChallengingLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.62, 0), CEGUI::UDim(0.91, 0)));
 	m_pChallengingLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
 	m_pSheet->addChildWindow(m_pChallengingLevel);
 
-	m_pImpossibleLevel = win->createWindow("TaharezLook/Button", "Root/Adventure/Impossible");
+	m_pImpossibleLevel = m_pWindowManager->createWindow("TaharezLook/Button", "Root/Adventure/Impossible");
 	m_pImpossibleLevel->setText("Insane dungeon");
 	m_pImpossibleLevel->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.07, 0)));
 	m_pImpossibleLevel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.91, 0)));
 	m_pImpossibleLevel->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::AdventureMode, this));
 	m_pSheet->addChildWindow(m_pImpossibleLevel);
 
-	CEGUI::Window *m_pEquipmentLabel = win->createWindow("TaharezLook/StaticText", "Root/City/EquipmentLabel" );
+	CEGUI::Window *m_pEquipmentLabel = m_pWindowManager->createWindow("TaharezLook/StaticText", "Root/City/EquipmentLabel" );
 	m_pEquipmentLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );
 	m_pEquipmentLabel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.01, 0), CEGUI::UDim(0.01, 0)));
 	m_pEquipmentLabel->setText("Equipment");
 	m_pEquipmentLabel->setAlpha(64);
 	m_pCity->addChildWindow(m_pEquipmentLabel);
 
-	CEGUI::Window *m_pInventoryLabel = win->createWindow("TaharezLook/StaticText", "Root/City/InventoryLabel" );
+	CEGUI::Window *m_pInventoryLabel = m_pWindowManager->createWindow("TaharezLook/StaticText", "Root/City/InventoryLabel" );
 	m_pInventoryLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );
 	m_pInventoryLabel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.01, 0), CEGUI::UDim(0.50, 0)));
 	m_pInventoryLabel->setText("Inventory");
 	m_pInventoryLabel->setAlpha(64);
 	m_pCity->addChildWindow(m_pInventoryLabel);
 
-	CEGUI::Window *m_pShopLabel = win->createWindow("TaharezLook/StaticText", "Root/City/ItemsLabel" );
+	CEGUI::Window *m_pShopLabel = m_pWindowManager->createWindow("TaharezLook/StaticText", "Root/City/ItemsLabel" );
 	m_pShopLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );
 	m_pShopLabel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.69, 0), CEGUI::UDim(0.01, 0)));
 	m_pShopLabel->setText("Ye olde shoppe");
 	m_pShopLabel->setAlpha(64);
 	m_pCity->addChildWindow(m_pShopLabel);
 
-	CEGUI::Window *m_pStatsLabel = win->createWindow("TaharezLook/StaticText", "Root/City/StatsLabel" );
+	CEGUI::Window *m_pStatsLabel = m_pWindowManager->createWindow("TaharezLook/StaticText", "Root/City/StatsLabel" );
 	m_pStatsLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );
 	m_pStatsLabel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.01, 0)));
 	m_pStatsLabel->setText("Your character");
 	m_pStatsLabel->setAlpha(64);
 	m_pCity->addChildWindow(m_pStatsLabel);
 
-	m_pCharacterWindow = win->createWindow("TaharezLook/StaticText", "Root/City/CharacterWindow" );
+	m_pCharacterWindow = m_pWindowManager->createWindow("TaharezLook/StaticText", "Root/City/CharacterWindow" );
 	m_pCharacterWindow->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.20, 0)) );
 	m_pCharacterWindow->setPosition(CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.05, 0)));
 	m_pCharacterWindow->setAlpha(25);
 	m_pCity->addChildWindow(m_pCharacterWindow);
 
-	m_pItemLabel = win->createWindow("TaharezLook/StaticText", "Root/City/ItemLabel" );
+	m_pItemLabel = m_pWindowManager->createWindow("TaharezLook/StaticText", "Root/City/ItemLabel" );
 	m_pItemLabel->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.05, 0)) );
 	m_pItemLabel->setPosition(CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.50, 0)));
 	m_pItemLabel->setText("Selected item");
 	m_pItemLabel->setAlpha(64);
 	m_pCity->addChildWindow(m_pItemLabel);
 
-	m_pItemWindow = win->createWindow("TaharezLook/StaticText", "Root/City/ItemWindow" );
+	m_pItemWindow = m_pWindowManager->createWindow("TaharezLook/StaticText", "Root/City/ItemWindow" );
 	m_pItemWindow->setSize( CEGUI::UVector2(CEGUI::UDim(0.30, 0), CEGUI::UDim(0.20, 0)) );
 	m_pItemWindow->setPosition(CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.54, 0)));
 	m_pItemWindow->setText("THE SWORD OF ABSOLUTE TRUTH\n+5 ATP\nValue: 3500 Gold");
 	m_pItemWindow->setAlpha(25);
 	m_pCity->addChildWindow(m_pItemWindow);
 
-	m_pBuySellSelected = win->createWindow("TaharezLook/Button", "Root/City/BuySellButton");
+	m_pBuySellSelected = m_pWindowManager->createWindow("TaharezLook/Button", "Root/City/BuySellButton");
 	m_pBuySellSelected->setText("Buy item");
 	m_pBuySellSelected->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.04, 0)));
 	m_pBuySellSelected->setPosition(CEGUI::UVector2(CEGUI::UDim(0.35, 0), CEGUI::UDim(0.75, 0)));
 	m_pBuySellSelected->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CGameEngine::BuySellItem, this));
 	m_pCity->addChildWindow(m_pBuySellSelected);
 
-	m_pEquipDequipSelected = win->createWindow("TaharezLook/Button", "Root/City/EquipDequipButton");
+	m_pEquipDequipSelected = m_pWindowManager->createWindow("TaharezLook/Button", "Root/City/EquipDequipButton");
 	m_pEquipDequipSelected->setText("Equip item");
 	m_pEquipDequipSelected->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.04, 0)));
 	m_pEquipDequipSelected->setPosition(CEGUI::UVector2(CEGUI::UDim(0.50, 0), CEGUI::UDim(0.75, 0)));

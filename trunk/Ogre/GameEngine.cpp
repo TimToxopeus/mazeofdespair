@@ -279,6 +279,11 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 			SetGUIMode( MAINMENU );
 			m_bHadCityOpen = true;
 		}
+		else if ( m_bMapVisible )
+		{
+			m_bMapVisible = false;
+			m_pMap->setVisible( false );
+		}
 		else if ( m_pMainmenu->isVisible() )
 		{
 			if ( m_bLoaded )
@@ -350,6 +355,13 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 		m_bStatsOn = !m_bStatsOn;
 		showDebugOverlay(m_bStatsOn);
 		m_fTimeUntilNextToggle = 1;
+	}
+
+	if( m_pKeyboard->isKeyDown(KC_M) && m_fTimeUntilNextToggle <= 0 && m_bInAdventureMode )
+	{
+		m_bMapVisible = !m_bMapVisible;
+		m_pMap->setVisible(m_bMapVisible);
+		m_fTimeUntilNextToggle = 0.3;
 	}
 
 	if( m_pKeyboard->isKeyDown(KC_V) && m_fTimeUntilNextToggle <= 0 )
@@ -528,6 +540,10 @@ void CGameEngine::moveCamera()
 	// Only update map data if we change tile, no point doing it every frame
 	if ( m_iOldClippedX != clippedX || m_iOldClippedY != clippedY )
 	{
+		float  mapW, mapH;
+		mapW = 0.684f / m_pMapLoader->GetWidth();
+		mapH = 0.808f / m_pMapLoader->GetHeight();
+
 		vector<int> erase, erase2;
 		for ( int a = 0; a<m_pHiddenCubes.size(); a++ )
 		{
@@ -538,6 +554,18 @@ void CGameEngine::moveCamera()
 				{
 					m_pDiscoveredCubes.push_back( pCube );
 					erase.push_back(a);
+
+					// Add the new tile to the map
+					float mapX, mapY;
+					mapX = 0.137f + (mapW * pCube->x);
+					mapY = 0.067f + (mapH * pCube->y);
+
+					string tilename = "Root/Map/Tile" + itoa2(pCube->x) + "," + itoa2(pCube->y);
+					CEGUI::Window *m_pTile = m_pWindowManager->createWindow("TaharezLook/StaticImage", tilename.c_str());
+					m_pTile->setSize( CEGUI::UVector2(CEGUI::UDim(mapW, 0), CEGUI::UDim(mapH, 0)) );
+					m_pTile->setPosition( CEGUI::UVector2(CEGUI::UDim(mapX,0), CEGUI::UDim(mapY,0)) );
+					m_pTile->setProperty("Image", CEGUI::PropertyHelper::imageToString(&m_pMapWallSet->getImage((CEGUI::utf8*)"Dirt.jpg")));
+					m_pMap->addChildWindow(m_pTile);
 				}
 			}
 		}
@@ -831,6 +859,7 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 	{
 		NextLevel(e);
 		m_pHiddenCubes = m_pMapLoader->GetCubes();
+
 
 		m_iOldClippedX = m_iOldClippedY = -1;
 
@@ -1153,6 +1182,9 @@ void CGameEngine::SetGUIMode( GUIMode mode )
 	m_pMainmenu->setVisible( false );
 	m_pCounterbox->setVisible( false );
 	m_pInsanityBar->setVisible( false );
+
+	m_bMapVisible = false;
+	m_pMap->setVisible( false );
 
 	switch (mode)
 	{
