@@ -474,6 +474,7 @@ void CGameEngine::moveCamera()
 	clippedX = (position.x + 50 - (((int)position.x + 50) % 100)) / 100;
 	clippedY = (position.z + 50 - (((int)position.z + 50) % 100)) / 100;
 
+	// Loop through items to check if we picked one up
 	for ( int i = 0; i<m_pLevelItems.size(); i++ )
 	{
 		CLevelItem *pItem = m_pLevelItems[i];
@@ -524,6 +525,7 @@ void CGameEngine::moveCamera()
 		}
 	}
 
+	// Only update map data if we change tile, no point doing it every frame
 	if ( m_iOldClippedX != clippedX || m_iOldClippedY != clippedY )
 	{
 		vector<int> erase, erase2;
