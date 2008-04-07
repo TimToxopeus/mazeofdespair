@@ -145,6 +145,7 @@ private:
 	CEGUI::Window *m_pBuySellSelected;
 	CEGUI::Window *m_pEquipDequipSelected;
 	CEGUI::Window *m_pMap;
+	CEGUI::Window *m_pMapPlayer;
 	CEGUI::Imageset *m_pMapWallSet;
 
 	// Timer for windows.

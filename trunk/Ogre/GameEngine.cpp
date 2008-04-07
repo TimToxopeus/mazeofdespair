@@ -540,9 +540,14 @@ void CGameEngine::moveCamera()
 	// Only update map data if we change tile, no point doing it every frame
 	if ( m_iOldClippedX != clippedX || m_iOldClippedY != clippedY )
 	{
-		float  mapW, mapH;
+		float mapX, mapY, mapW, mapH;
 		mapW = 0.684f / m_pMapLoader->GetWidth();
 		mapH = 0.808f / m_pMapLoader->GetHeight();
+		mapX = 0.137f + (mapW * clippedX);
+		mapY = 0.067f + (mapH * clippedY);
+
+		m_pMapPlayer->setSize( CEGUI::UVector2(CEGUI::UDim(mapW, 0), CEGUI::UDim(mapH, 0)) );
+		m_pMapPlayer->setPosition( CEGUI::UVector2(CEGUI::UDim(mapX,0), CEGUI::UDim(mapY,0)) );
 
 		vector<int> erase, erase2;
 		for ( int a = 0; a<m_pHiddenCubes.size(); a++ )
@@ -556,7 +561,6 @@ void CGameEngine::moveCamera()
 					erase.push_back(a);
 
 					// Add the new tile to the map
-					float mapX, mapY;
 					mapX = 0.137f + (mapW * pCube->x);
 					mapY = 0.067f + (mapH * pCube->y);
 
