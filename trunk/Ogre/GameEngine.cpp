@@ -257,12 +257,6 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 	{
 		Clean();
 		m_pInsanityBar->setVisible( false );
-		m_pCity->setVisible( true );
-		m_pEasyLevel->setVisible( true );
-		m_pMediumLevel->setVisible( true );
-		m_pHardLevel->setVisible( true );
-		m_pChallengingLevel->setVisible( true );
-		m_pImpossibleLevel->setVisible( true );
 		ShowCity();
 	}
 
@@ -270,32 +264,23 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 	{
 		if ( m_pCity->isVisible() )
 		{
-			m_pCity->setVisible( false );
-			m_pEasyLevel->setVisible( false );
-			m_pMediumLevel->setVisible( false );
-			m_pHardLevel->setVisible( false );
-			m_pChallengingLevel->setVisible( false );
-			m_pImpossibleLevel->setVisible( false );
-			m_pMainmenu->setVisible( true );
+			SetGUIMode( MAINMENU );
 			m_bHadCityOpen = true;
 		}
 		else if ( m_pMainmenu->isVisible() )
 		{
 			if ( m_bLoaded )
 			{
-				m_pMainmenu->setVisible(false);
+				if ( m_bInAdventureMode )
+					SetGUIMode( ADVENTURE );
+				else
+					SetGUIMode( NONE );
 			}
 			else
 			{
 				if ( m_bHadCityOpen == true )
 				{
-					m_pMainmenu->setVisible( false );
-					m_pCity->setVisible( true );
-					m_pEasyLevel->setVisible( true );
-					m_pMediumLevel->setVisible( true );
-					m_pHardLevel->setVisible( true );
-					m_pChallengingLevel->setVisible( true );
-					m_pImpossibleLevel->setVisible( true );
+					SetGUIMode( CITY );
 				}
 				else
 					return false;
@@ -306,18 +291,11 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 			if ( m_bInAdventureMode )
 			{
 				Clean();
-				m_pInsanityBar->setVisible( false );
-				m_pCity->setVisible( true );
-				m_pEasyLevel->setVisible( true );
-				m_pMediumLevel->setVisible( true );
-				m_pHardLevel->setVisible( true );
-				m_pChallengingLevel->setVisible( true );
-				m_pImpossibleLevel->setVisible( true );
 				ShowCity();
 			}
 			else
 			{
-				m_pMainmenu->setVisible(true);
+				SetGUIMode( MAINMENU );
 			}
 			m_pMouse->setBuffered(true);
 			CEGUI::MouseCursor::getSingleton().setVisible(true);
@@ -763,14 +741,7 @@ bool CGameEngine::LoadLevel( const CEGUI::EventArgs &e )
 
 	m_iTorchCount = 0;
 
-	m_pCity->setVisible( false );
-	m_pEasyLevel->setVisible( false );
-	m_pMediumLevel->setVisible( false );
-	m_pHardLevel->setVisible( false );
-	m_pChallengingLevel->setVisible( false );
-	m_pImpossibleLevel->setVisible( false );
-	m_pMainmenu->setVisible(false);
-	m_pCounterbox->setVisible(false);
+	SetGUIMode( NONE );
 	CEGUI::MouseCursor::getSingleton().setVisible(true);
 
 	keylights = m_pMapLoader->LoadMap( "map.txt", m_pPrimary, m_pCamera );
@@ -786,9 +757,6 @@ bool CGameEngine::LoadLevel( const CEGUI::EventArgs &e )
 	m_pMessageBox->setVisible( true );
 	m_pMessageBoxText->setText("You can rotate the camera by holding down the right mouse button!");
 	m_fMessageTime = 5;
-
-	// No insanity bar in normal level mode
-	m_pInsanityBar->setVisible( false );
 
 	return true;
 }
@@ -819,12 +787,7 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 
 		m_bInAdventureMode = true;
 		m_bDisplayedSwitchTip = false;
-		m_pCity->setVisible( false );
-		m_pEasyLevel->setVisible( false );
-		m_pMediumLevel->setVisible( false );
-		m_pHardLevel->setVisible( false );
-		m_pChallengingLevel->setVisible( false );
-		m_pImpossibleLevel->setVisible( false );
+		SetGUIMode( ADVENTURE );
 
 		m_pMessageBox->setVisible( true );
 		m_pMessageBoxText->setText("In adventure mode you have to defeat the ninja before going insane.\nWhen you run out of torches you will slowly lose your mind in the dark!");
@@ -832,15 +795,11 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 	}
 	else
 	{
-		Ogre::LogManager::getSingleton().logMessage("Pre-clean");
 		Clean();
 		Load();
-		Ogre::LogManager::getSingleton().logMessage("Post-clean");
 		m_pMessageBox->setVisible( false );
 		m_pMainmenu->setVisible( false );
-		Ogre::LogManager::getSingleton().logMessage("Pre-city");
 		ShowCity();
-		Ogre::LogManager::getSingleton().logMessage("Post-city");
 	}
 
 	return true;
@@ -862,14 +821,7 @@ bool CGameEngine::NextLevel( const CEGUI::EventArgs &e )
 	m_pInsanityBar->setProgress( 1.0f );
 
 	Ogre::LogManager::getSingleton().logMessage("Loading level!");
-	m_pMainmenu->setVisible(false);
-	m_pCounterbox->setVisible(true);
-	m_pCity->setVisible( false );
-	m_pEasyLevel->setVisible( false );
-	m_pMediumLevel->setVisible( false );
-	m_pHardLevel->setVisible( false );
-	m_pChallengingLevel->setVisible( false );
-	m_pImpossibleLevel->setVisible( false );
+	SetGUIMode( ADVENTURE );
 	CEGUI::MouseCursor::getSingleton().setVisible(true);
 
 	keylights = m_pMapLoader->LoadMap( itoa2(m_iLevel + 5), m_pPrimary, m_pCamera, true );
@@ -896,12 +848,7 @@ void CGameEngine::ShowCity(bool refreshShop)
 								"\nDefensive power: " + itoa2(m_pPlayer->GetDef()) + 
 								"\nGold: " + itoa2(m_pPlayer->GetGold()) + " goldpieces");
 
-	m_pCity->setVisible( true );
-	m_pEasyLevel->setVisible( true );
-	m_pMediumLevel->setVisible( true );
-	m_pHardLevel->setVisible( true );
-	m_pChallengingLevel->setVisible( true );
-	m_pImpossibleLevel->setVisible( true );
+	SetGUIMode( MAINMENU );
 
 	m_iSelectedType = m_iSelectedIndex = 0;
 	m_pItemLabel->setVisible( false );
@@ -1148,3 +1095,37 @@ bool CGameEngine::EquipDequipItem( const CEGUI::EventArgs &e )
 	return true;
 }
 
+void CGameEngine::SetGUIMode( GUIMode mode )
+{
+	m_pCity->setVisible( false );
+	m_pEasyLevel->setVisible( false );
+	m_pMediumLevel->setVisible( false );
+	m_pHardLevel->setVisible( false );
+	m_pChallengingLevel->setVisible( false );
+	m_pImpossibleLevel->setVisible( false );
+	m_pMainmenu->setVisible( false );
+	m_pCounterbox->setVisible( false );
+	m_pInsanityBar->setVisible( false );
+
+	switch (mode)
+	{
+	case MAINMENU:
+		m_pMainmenu->setVisible( true );
+		break;
+	case CITY:
+		m_pCity->setVisible( true );
+		m_pEasyLevel->setVisible( true );
+		m_pMediumLevel->setVisible( true );
+		m_pHardLevel->setVisible( true );
+		m_pChallengingLevel->setVisible( true );
+		m_pImpossibleLevel->setVisible( true );
+		break;
+	case ADVENTURE:
+		m_pCounterbox->setVisible( true );
+		m_pInsanityBar->setVisible( false );
+		break;
+	case NONE:
+	default:
+		break;
+	}
+}
