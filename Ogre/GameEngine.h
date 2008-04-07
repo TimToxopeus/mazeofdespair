@@ -31,6 +31,14 @@ using namespace Ogre;
 
 #define CAMERA_NAME "SceneCamera"
 
+enum GUIMode
+{
+	NONE,
+	MAINMENU,
+	CITY,
+	ADVENTURE
+};
+
 class CGameEngine : public FrameListener, WindowEventListener, public OIS::MouseListener
 {
 private:
@@ -190,6 +198,8 @@ public:
 
 	// GUI
 	CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID);
+	void SetGUIMode( GUIMode mode );
+
 	// Mouse events
 	bool mouseMoved(const OIS::MouseEvent &arg);
 	bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
