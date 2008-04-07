@@ -37,4 +37,6 @@ public:
 	// hasCube returns true when there is a cube at the requested position.
 	// This is used in a fast look-up collision detection.
 	bool hasCube( Ogre::Vector3 position, bool ignoreNinja = false );
+
+	std::vector<cube *> GetCubes() { return cubes; }
 };

@@ -109,6 +109,12 @@ private:
 	std::vector<CLevelItem *> m_pLevelItems;
 	std::vector<CMonster *> m_pMonsters;
 
+	// Map variables
+	std::vector<cube *> m_pHiddenCubes;
+	std::vector<cube *> m_pDiscoveredCubes;
+	int m_iOldClippedX;
+	int m_iOldClippedY;
+
 	// CEGUI
 	CEGUI::System *m_pGUISystem;
 	CEGUI::OgreCEGUIRenderer *m_pGUIRenderer;

@@ -75,6 +75,18 @@ void CGameEngine::Clean()
 	}
 	m_pMonsters.clear();
 
+	for ( int a = 0; a<m_pHiddenCubes.size(); a++ )
+	{
+		delete m_pHiddenCubes[a];
+	}
+	m_pHiddenCubes.clear();
+
+	for ( int a = 0; a<m_pDiscoveredCubes.size(); a++ )
+	{
+		delete m_pDiscoveredCubes[a];
+	}
+	m_pDiscoveredCubes.clear();
+
 	m_pPrimary->clearScene();
 }
 
@@ -459,13 +471,13 @@ void CGameEngine::moveCamera()
 	// Check if we are on top of an item and if we can pick it up
 	int clippedX, clippedY; // Clip camera position
 	Vector3 position = m_pCamera->getPosition();
-	clippedX = (((position.x + 50 - (((int)position.x + 50) % 100)) / 100) - 1) / 3;
-	clippedY = (((position.z + 50 - (((int)position.z + 50) % 100)) / 100) - 1) / 3;
+	clippedX = (position.x + 50 - (((int)position.x + 50) % 100)) / 100;
+	clippedY = (position.z + 50 - (((int)position.z + 50) % 100)) / 100;
 
 	for ( int i = 0; i<m_pLevelItems.size(); i++ )
 	{
 		CLevelItem *pItem = m_pLevelItems[i];
-		if ( pItem->getTileX() == clippedX && pItem->getTileY() == clippedY )
+		if ( ((pItem->getTileX() * 3) + 1) == clippedX && ((pItem->getTileY() * 3) + 1) == clippedY )
 		{
 			CItem *pActualItem = m_pFactory->GetRandomItem(rand()%10, m_iLevel);
 			if ( m_pPlayer->AddItemToInventory( pActualItem ) )
@@ -497,13 +509,45 @@ void CGameEngine::moveCamera()
 	for ( int i = 0; i<m_pMonsters.size(); i++ )
 	{
 		CMonster *pMonster = m_pMonsters[i];
-		if ( pMonster->getTileX() == clippedX && pMonster->getTileY() == clippedY )
+		if ( ((pMonster->getTileX() * 3) + 1) == clippedX && ((pMonster->getTileY() * 3) + 1) == clippedY )
 		{
 			CCombatant *pActualMonster = m_pFactory->GetRandomMonster(m_iLevel);
+			Ogre::LogManager::getSingleton().logMessage("Starting battle with " + pActualMonster->GetName() );
 			// Start combat!
 			// Player: m_pPlayer
 			// Combatant: pActualMonster
+			delete pActualMonster;
+			m_pPrimary->destroyEntity( pMonster->getEntity() );
+			m_pPrimary->getRootSceneNode()->removeChild(pMonster->getNode());
+			delete m_pMonsters[i];
+			m_pMonsters.erase( m_pMonsters.begin() + i );
 		}
+	}
+
+	if ( m_iOldClippedX != clippedX || m_iOldClippedY != clippedY )
+	{
+		vector<int> erase, erase2;
+		for ( int a = 0; a<m_pHiddenCubes.size(); a++ )
+		{
+			cube *pCube = m_pHiddenCubes[a];
+			if ( pCube->x + 1 == clippedX || pCube->x == clippedX || pCube->x - 1 == clippedX )
+			{
+				if ( pCube->y + 1 == clippedY || pCube->y == clippedY || pCube->y - 1 == clippedY )
+				{
+					m_pDiscoveredCubes.push_back( pCube );
+					erase.push_back(a);
+				}
+			}
+		}
+
+		// Erase cubes in backwards order to maintain index correctness
+		for ( int a = erase.size() - 1; a >= 0; a-- )
+		{
+			m_pHiddenCubes.erase( m_pHiddenCubes.begin() + erase[a] );
+		}
+
+		m_iOldClippedX = clippedX;
+		m_iOldClippedY = clippedY;
 	}
 
 	// Calculate flashlight position and direction, based on the camera position.
@@ -784,6 +828,9 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 	if ( m_iLevel != 0 )
 	{
 		NextLevel(e);
+		m_pHiddenCubes = m_pMapLoader->GetCubes();
+
+		m_iOldClippedX = m_iOldClippedY = -1;
 
 		m_bInAdventureMode = true;
 		m_bDisplayedSwitchTip = false;
@@ -797,8 +844,6 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 	{
 		Clean();
 		Load();
-		m_pMessageBox->setVisible( false );
-		m_pMainmenu->setVisible( false );
 		ShowCity();
 	}
 
@@ -848,7 +893,7 @@ void CGameEngine::ShowCity(bool refreshShop)
 								"\nDefensive power: " + itoa2(m_pPlayer->GetDef()) + 
 								"\nGold: " + itoa2(m_pPlayer->GetGold()) + " goldpieces");
 
-	SetGUIMode( MAINMENU );
+	SetGUIMode( CITY );
 
 	m_iSelectedType = m_iSelectedIndex = 0;
 	m_pItemLabel->setVisible( false );
