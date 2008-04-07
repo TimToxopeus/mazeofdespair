@@ -39,4 +39,6 @@ public:
 	bool hasCube( Ogre::Vector3 position, bool ignoreNinja = false );
 
 	std::vector<cube *> GetCubes() { return cubes; }
+	int GetWidth() { return w; }
+	int GetHeight() { return h; }
 };
