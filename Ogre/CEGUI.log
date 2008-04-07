@@ -1,148 +1,148 @@
-06/04/2008 16:31:08 (InfL1)	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-06/04/2008 16:31:08 (InfL1)	+                     Crazy Eddie's GUI System - Event log                    +
-06/04/2008 16:31:08 (InfL1)	+                          (http://www.cegui.org.uk/)                         +
-06/04/2008 16:31:08 (InfL1)	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+07/04/2008 13:19:53 (InfL1)	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+07/04/2008 13:19:53 (InfL1)	+                     Crazy Eddie's GUI System - Event log                    +
+07/04/2008 13:19:53 (InfL1)	+                          (http://www.cegui.org.uk/)                         +
+07/04/2008 13:19:53 (InfL1)	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-06/04/2008 16:31:08 (InfL1)	CEGUI::Logger singleton created.
-06/04/2008 16:31:08 (InfL1)	---- Begining CEGUI System initialisation ----
-06/04/2008 16:31:08 (InfL1)	CEGUI::ImagesetManager singleton created
-06/04/2008 16:31:08 (InfL1)	CEGUI::FontManager singleton created.
-06/04/2008 16:31:08 (InfL1)	CEGUI::WindowFactoryManager singleton created
-06/04/2008 16:31:08 (InfL1)	CEGUI::WindowManager singleton created
-06/04/2008 16:31:08 (InfL1)	CEGUI::SchemeManager singleton created.
-06/04/2008 16:31:08 (InfL1)	CEGUI::MouseCursor singleton created.
-06/04/2008 16:31:08 (InfL1)	CEGUI::GlobalEventSet singleton created.
-06/04/2008 16:31:08 (InfL1)	CEGUI::WidgetLookManager singleton created.
-06/04/2008 16:31:08 (InfL1)	CEGUI::WindowRendererManager singleton created
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'DefaultWindow' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'DragContainer' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'ScrolledContainer' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'ClippedContainer' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/Checkbox' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/PushButton' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/RadioButton' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/Combobox' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/ComboDropList' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/Editbox' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/FrameWindow' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/ItemEntry' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/Listbox' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/ListHeader' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/ListHeaderSegment' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/Menubar' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/PopupMenu' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/MenuItem' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/MultiColumnList' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/MultiLineEditbox' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/ProgressBar' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/ScrollablePane' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/Scrollbar' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/Slider' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/Spinner' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/TabButton' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/TabControl' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/Thumb' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/Titlebar' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/Tooltip' windows added.
-06/04/2008 16:31:08 (InfL1)	WindowFactory for 'CEGUI/ItemListbox' windows added.
-06/04/2008 16:31:08 (InfL1)	Window type alias named 'DefaultGUISheet' added for window type 'DefaultWindow'.
-06/04/2008 16:31:08 (InfL1)	CEGUI::System singleton created.
-06/04/2008 16:31:08 (InfL1)	---- CEGUI System initialisation completed ----
-06/04/2008 16:31:08 (InfL1)	---- Version 0.5.1 ----
-06/04/2008 16:31:08 (InfL1)	---- Renderer module is: CEGUI::OgreRenderer - Official Ogre based renderer module for CEGUI ----
-06/04/2008 16:31:08 (InfL1)	---- XML Parser module is: CEGUI::ExpatParser - Official expat based parser module for CEGUI ----
-06/04/2008 16:31:08 (InfL1)	---- Scripting module is: None ----
-06/04/2008 16:31:08 (InfL1)	Attempting to load Scheme from file 'TaharezLookSkin.scheme'.
-06/04/2008 16:31:08 (InfL1)	Attempting to create an Imageset from the information specified in file 'TaharezLook.imageset'.
-06/04/2008 16:31:08 (InfL1)	Started creation of Imageset from XML specification:
-06/04/2008 16:31:08 (InfL1)	---- CEGUI Imageset name: TaharezLook
-06/04/2008 16:31:08 (InfL1)	---- Source texture file: TaharezLook.tga in resource group: (Default)
-06/04/2008 16:31:08 (InfL1)	Attempting to create Font from the information specified in file 'bluehighway-12.font'.
-06/04/2008 16:31:08 (InfL1)	Started creation of FreeType Font:
-06/04/2008 16:31:08 (InfL1)	---- CEGUI font name: BlueHighway-12
-06/04/2008 16:31:08 (InfL1)	----     Source file: bluehigh.ttf in resource group: (Default)
-06/04/2008 16:31:08 (InfL1)	---- Real point size: 12
-06/04/2008 16:31:08 (InfL1)	Succsessfully loaded 289 glyphs
-06/04/2008 16:31:08 (InfL1)	Attempting to create Font from the information specified in file 'bluehighway-10.font'.
-06/04/2008 16:31:08 (InfL1)	Started creation of FreeType Font:
-06/04/2008 16:31:08 (InfL1)	---- CEGUI font name: BlueHighway-10
-06/04/2008 16:31:08 (InfL1)	----     Source file: bluehigh.ttf in resource group: (Default)
-06/04/2008 16:31:08 (InfL1)	---- Real point size: 10
-06/04/2008 16:31:08 (InfL1)	Succsessfully loaded 289 glyphs
-06/04/2008 16:31:08 (InfL1)	Attempting to create Font from the information specified in file 'bluehighway-8.font'.
-06/04/2008 16:31:08 (InfL1)	Started creation of FreeType Font:
-06/04/2008 16:31:08 (InfL1)	---- CEGUI font name: BlueHighway-8
-06/04/2008 16:31:08 (InfL1)	----     Source file: bluehigh.ttf in resource group: (Default)
-06/04/2008 16:31:08 (InfL1)	---- Real point size: 8
-06/04/2008 16:31:08 (InfL1)	Succsessfully loaded 289 glyphs
-06/04/2008 16:31:08 (InfL1)	===== Falagard 'root' element: look and feel parsing begins =====
-06/04/2008 16:31:08 (InfL1)	===== Look and feel parsing completed =====
-06/04/2008 16:31:08 (InfL1)	No window renderer factories specified for module 'CEGUIFalagardWRBase' - adding all available factories...
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/Button' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/Default' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/Editbox' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/FrameWindow' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/ItemEntry' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/ListHeader' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/ListHeaderSegment' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/Listbox' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/Menubar' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/MenuItem' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/MultiColumnList' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/MultiLineEditbox' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/PopupMenu' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/ProgressBar' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/ScrollablePane' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/Scrollbar' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/Slider' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/Static' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/StaticImage' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/StaticText' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/SystemButton' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/TabButton' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/TabControl' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/Titlebar' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/ToggleButton' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/Tooltip' added.
-06/04/2008 16:31:08 (InfL1)	WindowRendererFactory 'Falagard/ItemListbox' added.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/Button' using base type 'CEGUI/PushButton', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/Button'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/Checkbox' using base type 'CEGUI/Checkbox', window renderer 'Falagard/ToggleButton' and Look'N'Feel 'TaharezLook/Checkbox'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/ImageButton' using base type 'CEGUI/PushButton', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/ImageButton'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/RadioButton' using base type 'CEGUI/RadioButton', window renderer 'Falagard/ToggleButton' and Look'N'Feel 'TaharezLook/RadioButton'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/FrameWindow' using base type 'CEGUI/FrameWindow', window renderer 'Falagard/FrameWindow' and Look'N'Feel 'TaharezLook/FrameWindow'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/Titlebar' using base type 'CEGUI/Titlebar', window renderer 'Falagard/Titlebar' and Look'N'Feel 'TaharezLook/Titlebar'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/SystemButton' using base type 'CEGUI/PushButton', window renderer 'Falagard/SystemButton' and Look'N'Feel 'TaharezLook/Button'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/Editbox' using base type 'CEGUI/Editbox', window renderer 'Falagard/Editbox' and Look'N'Feel 'TaharezLook/Editbox'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/MultiLineEditbox' using base type 'CEGUI/MultiLineEditbox', window renderer 'Falagard/MultiLineEditbox' and Look'N'Feel 'TaharezLook/MultiLineEditbox'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/Menubar' using base type 'CEGUI/Menubar', window renderer 'Falagard/Menubar' and Look'N'Feel 'TaharezLook/Menubar'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/PopupMenu' using base type 'CEGUI/PopupMenu', window renderer 'Falagard/PopupMenu' and Look'N'Feel 'TaharezLook/PopupMenu'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/MenuItem' using base type 'CEGUI/MenuItem', window renderer 'Falagard/MenuItem' and Look'N'Feel 'TaharezLook/MenuItem'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/AlternateProgressBar' using base type 'CEGUI/ProgressBar', window renderer 'Falagard/ProgressBar' and Look'N'Feel 'TaharezLook/AltProgressBar'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/ProgressBar' using base type 'CEGUI/ProgressBar', window renderer 'Falagard/ProgressBar' and Look'N'Feel 'TaharezLook/ProgressBar'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/VUMeter' using base type 'CEGUI/ProgressBar', window renderer 'Falagard/ProgressBar' and Look'N'Feel 'TaharezLook/VUMeter'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/VerticalScrollbar' using base type 'CEGUI/Scrollbar', window renderer 'Falagard/Scrollbar' and Look'N'Feel 'TaharezLook/VerticalScrollbar'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/HorizontalScrollbar' using base type 'CEGUI/Scrollbar', window renderer 'Falagard/Scrollbar' and Look'N'Feel 'TaharezLook/HorizontalScrollbar'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/VerticalScrollbarThumb' using base type 'CEGUI/Thumb', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/VerticalScrollbarThumb'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/HorizontalScrollbarThumb' using base type 'CEGUI/Thumb', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/HorizontalScrollbarThumb'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/LargeVerticalScrollbar' using base type 'CEGUI/Scrollbar', window renderer 'Falagard/Scrollbar' and Look'N'Feel 'TaharezLook/LargeVerticalScrollbar'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/LargeVerticalScrollbarThumb' using base type 'CEGUI/Thumb', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/LargeVerticalScrollbarThumb'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/TabButton' using base type 'CEGUI/TabButton', window renderer 'Falagard/TabButton' and Look'N'Feel 'TaharezLook/TabButton'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/TabControl' using base type 'CEGUI/TabControl', window renderer 'Falagard/TabControl' and Look'N'Feel 'TaharezLook/TabControl'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/TabContentPane' using base type 'DefaultWindow', window renderer 'Falagard/Default' and Look'N'Feel 'TaharezLook/TabContentPane'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/TabButtonPane' using base type 'DefaultWindow', window renderer 'Falagard/Default' and Look'N'Feel 'TaharezLook/TabButtonPane'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/ComboDropList' using base type 'CEGUI/ComboDropList', window renderer 'Falagard/Listbox' and Look'N'Feel 'TaharezLook/ComboDropList'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/ComboEditbox' using base type 'CEGUI/Editbox', window renderer 'Falagard/Editbox' and Look'N'Feel 'TaharezLook/ComboEditbox'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/Combobox' using base type 'CEGUI/Combobox', window renderer 'Falagard/Default' and Look'N'Feel 'TaharezLook/Combobox'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/Listbox' using base type 'CEGUI/Listbox', window renderer 'Falagard/Listbox' and Look'N'Feel 'TaharezLook/Listbox'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/ListHeader' using base type 'CEGUI/ListHeader', window renderer 'Falagard/ListHeader' and Look'N'Feel 'TaharezLook/ListHeader'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/ListHeaderSegment' using base type 'CEGUI/ListHeaderSegment', window renderer 'Falagard/ListHeaderSegment' and Look'N'Feel 'TaharezLook/ListHeaderSegment'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/MultiColumnList' using base type 'CEGUI/MultiColumnList', window renderer 'Falagard/MultiColumnList' and Look'N'Feel 'TaharezLook/MultiColumnList'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/Slider' using base type 'CEGUI/Slider', window renderer 'Falagard/Slider' and Look'N'Feel 'TaharezLook/Slider'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/SliderThumb' using base type 'CEGUI/Thumb', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/SliderThumb'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/ScrollablePane' using base type 'CEGUI/ScrollablePane', window renderer 'Falagard/ScrollablePane' and Look'N'Feel 'TaharezLook/ScrollablePane'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/Spinner' using base type 'CEGUI/Spinner', window renderer 'Falagard/Default' and Look'N'Feel 'TaharezLook/Spinner'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/Tooltip' using base type 'CEGUI/Tooltip', window renderer 'Falagard/Tooltip' and Look'N'Feel 'TaharezLook/Tooltip'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/StaticImage' using base type 'DefaultWindow', window renderer 'Falagard/StaticImage' and Look'N'Feel 'TaharezLook/StaticImage'.
-06/04/2008 16:31:08 (InfL1)	Creating falagard mapping for type 'TaharezLook/StaticText' using base type 'DefaultWindow', window renderer 'Falagard/StaticText' and Look'N'Feel 'TaharezLook/StaticText'.
-06/04/2008 16:31:08 (InfL1)	Attempting to create Imageset 'BlueHighway-12_auto_glyph_images_ ' with texture only.
-06/04/2008 16:31:08 (InfL1)	Attempting to create Imageset 'CitySet' with texture only.
+07/04/2008 13:19:53 (InfL1)	CEGUI::Logger singleton created.
+07/04/2008 13:19:53 (InfL1)	---- Begining CEGUI System initialisation ----
+07/04/2008 13:19:53 (InfL1)	CEGUI::ImagesetManager singleton created
+07/04/2008 13:19:53 (InfL1)	CEGUI::FontManager singleton created.
+07/04/2008 13:19:53 (InfL1)	CEGUI::WindowFactoryManager singleton created
+07/04/2008 13:19:53 (InfL1)	CEGUI::WindowManager singleton created
+07/04/2008 13:19:53 (InfL1)	CEGUI::SchemeManager singleton created.
+07/04/2008 13:19:53 (InfL1)	CEGUI::MouseCursor singleton created.
+07/04/2008 13:19:53 (InfL1)	CEGUI::GlobalEventSet singleton created.
+07/04/2008 13:19:53 (InfL1)	CEGUI::WidgetLookManager singleton created.
+07/04/2008 13:19:53 (InfL1)	CEGUI::WindowRendererManager singleton created
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'DefaultWindow' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'DragContainer' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'ScrolledContainer' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'ClippedContainer' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/Checkbox' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/PushButton' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/RadioButton' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/Combobox' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/ComboDropList' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/Editbox' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/FrameWindow' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/ItemEntry' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/Listbox' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/ListHeader' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/ListHeaderSegment' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/Menubar' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/PopupMenu' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/MenuItem' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/MultiColumnList' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/MultiLineEditbox' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/ProgressBar' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/ScrollablePane' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/Scrollbar' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/Slider' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/Spinner' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/TabButton' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/TabControl' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/Thumb' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/Titlebar' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/Tooltip' windows added.
+07/04/2008 13:19:53 (InfL1)	WindowFactory for 'CEGUI/ItemListbox' windows added.
+07/04/2008 13:19:53 (InfL1)	Window type alias named 'DefaultGUISheet' added for window type 'DefaultWindow'.
+07/04/2008 13:19:53 (InfL1)	CEGUI::System singleton created.
+07/04/2008 13:19:53 (InfL1)	---- CEGUI System initialisation completed ----
+07/04/2008 13:19:53 (InfL1)	---- Version 0.5.1 ----
+07/04/2008 13:19:53 (InfL1)	---- Renderer module is: CEGUI::OgreRenderer - Official Ogre based renderer module for CEGUI ----
+07/04/2008 13:19:53 (InfL1)	---- XML Parser module is: CEGUI::ExpatParser - Official expat based parser module for CEGUI ----
+07/04/2008 13:19:53 (InfL1)	---- Scripting module is: None ----
+07/04/2008 13:19:53 (InfL1)	Attempting to load Scheme from file 'TaharezLookSkin.scheme'.
+07/04/2008 13:19:53 (InfL1)	Attempting to create an Imageset from the information specified in file 'TaharezLook.imageset'.
+07/04/2008 13:19:53 (InfL1)	Started creation of Imageset from XML specification:
+07/04/2008 13:19:53 (InfL1)	---- CEGUI Imageset name: TaharezLook
+07/04/2008 13:19:53 (InfL1)	---- Source texture file: TaharezLook.tga in resource group: (Default)
+07/04/2008 13:19:53 (InfL1)	Attempting to create Font from the information specified in file 'bluehighway-12.font'.
+07/04/2008 13:19:53 (InfL1)	Started creation of FreeType Font:
+07/04/2008 13:19:53 (InfL1)	---- CEGUI font name: BlueHighway-12
+07/04/2008 13:19:53 (InfL1)	----     Source file: bluehigh.ttf in resource group: (Default)
+07/04/2008 13:19:53 (InfL1)	---- Real point size: 12
+07/04/2008 13:19:53 (InfL1)	Succsessfully loaded 289 glyphs
+07/04/2008 13:19:53 (InfL1)	Attempting to create Font from the information specified in file 'bluehighway-10.font'.
+07/04/2008 13:19:53 (InfL1)	Started creation of FreeType Font:
+07/04/2008 13:19:53 (InfL1)	---- CEGUI font name: BlueHighway-10
+07/04/2008 13:19:53 (InfL1)	----     Source file: bluehigh.ttf in resource group: (Default)
+07/04/2008 13:19:53 (InfL1)	---- Real point size: 10
+07/04/2008 13:19:53 (InfL1)	Succsessfully loaded 289 glyphs
+07/04/2008 13:19:53 (InfL1)	Attempting to create Font from the information specified in file 'bluehighway-8.font'.
+07/04/2008 13:19:53 (InfL1)	Started creation of FreeType Font:
+07/04/2008 13:19:53 (InfL1)	---- CEGUI font name: BlueHighway-8
+07/04/2008 13:19:53 (InfL1)	----     Source file: bluehigh.ttf in resource group: (Default)
+07/04/2008 13:19:53 (InfL1)	---- Real point size: 8
+07/04/2008 13:19:53 (InfL1)	Succsessfully loaded 289 glyphs
+07/04/2008 13:19:53 (InfL1)	===== Falagard 'root' element: look and feel parsing begins =====
+07/04/2008 13:19:53 (InfL1)	===== Look and feel parsing completed =====
+07/04/2008 13:19:53 (InfL1)	No window renderer factories specified for module 'CEGUIFalagardWRBase' - adding all available factories...
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/Button' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/Default' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/Editbox' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/FrameWindow' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/ItemEntry' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/ListHeader' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/ListHeaderSegment' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/Listbox' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/Menubar' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/MenuItem' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/MultiColumnList' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/MultiLineEditbox' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/PopupMenu' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/ProgressBar' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/ScrollablePane' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/Scrollbar' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/Slider' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/Static' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/StaticImage' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/StaticText' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/SystemButton' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/TabButton' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/TabControl' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/Titlebar' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/ToggleButton' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/Tooltip' added.
+07/04/2008 13:19:53 (InfL1)	WindowRendererFactory 'Falagard/ItemListbox' added.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/Button' using base type 'CEGUI/PushButton', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/Button'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/Checkbox' using base type 'CEGUI/Checkbox', window renderer 'Falagard/ToggleButton' and Look'N'Feel 'TaharezLook/Checkbox'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/ImageButton' using base type 'CEGUI/PushButton', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/ImageButton'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/RadioButton' using base type 'CEGUI/RadioButton', window renderer 'Falagard/ToggleButton' and Look'N'Feel 'TaharezLook/RadioButton'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/FrameWindow' using base type 'CEGUI/FrameWindow', window renderer 'Falagard/FrameWindow' and Look'N'Feel 'TaharezLook/FrameWindow'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/Titlebar' using base type 'CEGUI/Titlebar', window renderer 'Falagard/Titlebar' and Look'N'Feel 'TaharezLook/Titlebar'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/SystemButton' using base type 'CEGUI/PushButton', window renderer 'Falagard/SystemButton' and Look'N'Feel 'TaharezLook/Button'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/Editbox' using base type 'CEGUI/Editbox', window renderer 'Falagard/Editbox' and Look'N'Feel 'TaharezLook/Editbox'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/MultiLineEditbox' using base type 'CEGUI/MultiLineEditbox', window renderer 'Falagard/MultiLineEditbox' and Look'N'Feel 'TaharezLook/MultiLineEditbox'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/Menubar' using base type 'CEGUI/Menubar', window renderer 'Falagard/Menubar' and Look'N'Feel 'TaharezLook/Menubar'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/PopupMenu' using base type 'CEGUI/PopupMenu', window renderer 'Falagard/PopupMenu' and Look'N'Feel 'TaharezLook/PopupMenu'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/MenuItem' using base type 'CEGUI/MenuItem', window renderer 'Falagard/MenuItem' and Look'N'Feel 'TaharezLook/MenuItem'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/AlternateProgressBar' using base type 'CEGUI/ProgressBar', window renderer 'Falagard/ProgressBar' and Look'N'Feel 'TaharezLook/AltProgressBar'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/ProgressBar' using base type 'CEGUI/ProgressBar', window renderer 'Falagard/ProgressBar' and Look'N'Feel 'TaharezLook/ProgressBar'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/VUMeter' using base type 'CEGUI/ProgressBar', window renderer 'Falagard/ProgressBar' and Look'N'Feel 'TaharezLook/VUMeter'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/VerticalScrollbar' using base type 'CEGUI/Scrollbar', window renderer 'Falagard/Scrollbar' and Look'N'Feel 'TaharezLook/VerticalScrollbar'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/HorizontalScrollbar' using base type 'CEGUI/Scrollbar', window renderer 'Falagard/Scrollbar' and Look'N'Feel 'TaharezLook/HorizontalScrollbar'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/VerticalScrollbarThumb' using base type 'CEGUI/Thumb', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/VerticalScrollbarThumb'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/HorizontalScrollbarThumb' using base type 'CEGUI/Thumb', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/HorizontalScrollbarThumb'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/LargeVerticalScrollbar' using base type 'CEGUI/Scrollbar', window renderer 'Falagard/Scrollbar' and Look'N'Feel 'TaharezLook/LargeVerticalScrollbar'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/LargeVerticalScrollbarThumb' using base type 'CEGUI/Thumb', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/LargeVerticalScrollbarThumb'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/TabButton' using base type 'CEGUI/TabButton', window renderer 'Falagard/TabButton' and Look'N'Feel 'TaharezLook/TabButton'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/TabControl' using base type 'CEGUI/TabControl', window renderer 'Falagard/TabControl' and Look'N'Feel 'TaharezLook/TabControl'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/TabContentPane' using base type 'DefaultWindow', window renderer 'Falagard/Default' and Look'N'Feel 'TaharezLook/TabContentPane'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/TabButtonPane' using base type 'DefaultWindow', window renderer 'Falagard/Default' and Look'N'Feel 'TaharezLook/TabButtonPane'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/ComboDropList' using base type 'CEGUI/ComboDropList', window renderer 'Falagard/Listbox' and Look'N'Feel 'TaharezLook/ComboDropList'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/ComboEditbox' using base type 'CEGUI/Editbox', window renderer 'Falagard/Editbox' and Look'N'Feel 'TaharezLook/ComboEditbox'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/Combobox' using base type 'CEGUI/Combobox', window renderer 'Falagard/Default' and Look'N'Feel 'TaharezLook/Combobox'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/Listbox' using base type 'CEGUI/Listbox', window renderer 'Falagard/Listbox' and Look'N'Feel 'TaharezLook/Listbox'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/ListHeader' using base type 'CEGUI/ListHeader', window renderer 'Falagard/ListHeader' and Look'N'Feel 'TaharezLook/ListHeader'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/ListHeaderSegment' using base type 'CEGUI/ListHeaderSegment', window renderer 'Falagard/ListHeaderSegment' and Look'N'Feel 'TaharezLook/ListHeaderSegment'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/MultiColumnList' using base type 'CEGUI/MultiColumnList', window renderer 'Falagard/MultiColumnList' and Look'N'Feel 'TaharezLook/MultiColumnList'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/Slider' using base type 'CEGUI/Slider', window renderer 'Falagard/Slider' and Look'N'Feel 'TaharezLook/Slider'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/SliderThumb' using base type 'CEGUI/Thumb', window renderer 'Falagard/Button' and Look'N'Feel 'TaharezLook/SliderThumb'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/ScrollablePane' using base type 'CEGUI/ScrollablePane', window renderer 'Falagard/ScrollablePane' and Look'N'Feel 'TaharezLook/ScrollablePane'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/Spinner' using base type 'CEGUI/Spinner', window renderer 'Falagard/Default' and Look'N'Feel 'TaharezLook/Spinner'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/Tooltip' using base type 'CEGUI/Tooltip', window renderer 'Falagard/Tooltip' and Look'N'Feel 'TaharezLook/Tooltip'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/StaticImage' using base type 'DefaultWindow', window renderer 'Falagard/StaticImage' and Look'N'Feel 'TaharezLook/StaticImage'.
+07/04/2008 13:19:53 (InfL1)	Creating falagard mapping for type 'TaharezLook/StaticText' using base type 'DefaultWindow', window renderer 'Falagard/StaticText' and Look'N'Feel 'TaharezLook/StaticText'.
+07/04/2008 13:19:53 (InfL1)	Attempting to create Imageset 'BlueHighway-12_auto_glyph_images_ ' with texture only.
+07/04/2008 13:19:53 (InfL1)	Attempting to create Imageset 'CitySet' with texture only.

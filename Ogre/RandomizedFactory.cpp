@@ -6,6 +6,7 @@ using namespace std;
 CRandomizedFactory::CRandomizedFactory()
 {
 	m_pNameGenerator = new CDoubleMarkov();
+	m_pNameGenerator->GenerateTable();
 }
 
 CRandomizedFactory::~CRandomizedFactory()
@@ -29,7 +30,8 @@ string CRandomizedFactory::GetRandomItemName( int iSlot )
 string CRandomizedFactory::GetRandomMonsterName()
 {
 	char cName[12];
-	m_pNameGenerator->GenerateName( 10, cName );
+	m_pNameGenerator->GenerateName( rand()%4 + 5, cName );
+	cName[0] -= 32; // Convert first character to uppercase.
 
 	string adjectives[] = { "Destroyer", "Defiler", "Corruptor", "Vanquisher", "Insidious", "Abhorred", "Horrible", "Terrible", "Dominator", "Atrocious",
 		"Repulsive", "Vile", "Horrid", "Heinous", "Unholy", "Fearful", "Loathsome", "Terrifying", "Intimidating", "Appalling" };
