@@ -238,6 +238,16 @@ bool CGameEngine::Init()
 	m_pSheet->addChildWindow(m_pMap);
 	m_pMap->setVisible( false );
 
+	cTex = m_pGUIRenderer->createTexture("player.jpg");
+	imageSet = CEGUI::ImagesetManager::getSingleton().createImageset((CEGUI::utf8*)"PlayerSet", cTex);
+	imageSet->defineImage((CEGUI::utf8*)"player.jpg", CEGUI::Point(0.0f, 0.0f), CEGUI::Size(cTex->getWidth(), cTex->getHeight()),	CEGUI::Point(0.0f,0.0f));
+
+	m_pMapPlayer = m_pWindowManager->createWindow("TaharezLook/StaticImage", "Root/Map/Player");
+	m_pMapPlayer->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.8, 0)) );
+	m_pMapPlayer->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.1,0)) );
+	m_pMapPlayer->setProperty("Image", CEGUI::PropertyHelper::imageToString(&imageSet->getImage((CEGUI::utf8*)"player.jpg")));
+	m_pMap->addChildWindow(m_pMapPlayer);
+
 	cTex = m_pGUIRenderer->createTexture("Dirt.jpg");
 	m_pMapWallSet = CEGUI::ImagesetManager::getSingleton().createImageset((CEGUI::utf8*)"WallSet", cTex);
 	m_pMapWallSet->defineImage((CEGUI::utf8*)"Dirt.jpg", CEGUI::Point(0.0f, 0.0f), CEGUI::Size(cTex->getWidth(), cTex->getHeight()),	CEGUI::Point(0.0f,0.0f));
