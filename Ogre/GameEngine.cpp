@@ -541,17 +541,11 @@ void CGameEngine::moveCamera()
 		if ( ((pMonster->getTileX() * 3) + 1) == clippedX && ((pMonster->getTileY() * 3) + 1) == clippedY )
 		{
 			CCombatant *pActualMonster = m_pFactory->GetRandomMonster(m_iLevel);
-			Ogre::LogManager::getSingleton().logMessage("Starting battle with " + pActualMonster->GetName() );
+			m_pCombatText->setText( "Starting battle with " + pActualMonster->GetName() );
 			// Start combat!
-			// Player: m_pPlayer
-			// Combatant: pActualMonster
-				m_bInCombatMode = true;
-				CombatMode *combatMode = new CombatMode(m_pPlayer, pActualMonster, pMonster);	
-//			delete pActualMonster;
-//			m_pPrimary->destroyEntity( pMonster->getEntity() );
-//			m_pPrimary->getRootSceneNode()->removeChild(pMonster->getNode());
-//			delete m_pMonsters[i];
-//			m_pMonsters.erase( m_pMonsters.begin() + i );
+			m_bInCombatMode = true;
+			CombatMode *combatMode = new CombatMode(m_pPlayer, pActualMonster, pMonster);	
+			m_pMonsters.erase( m_pMonsters.begin() + i );
 		}
 	}
 
