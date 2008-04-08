@@ -88,6 +88,12 @@ void CGameEngine::Clean()
 	}
 	m_pDiscoveredCubes.clear();
 
+	if ( pCombatMode )
+	{
+		delete pCombatMode;
+		pCombatMode = NULL;
+	}
+
 	m_pPrimary->clearScene();
 }
 
@@ -544,8 +550,33 @@ void CGameEngine::moveCamera()
 			m_pCombatText->setText( "Starting battle with " + pActualMonster->GetName() );
 			// Start combat!
 			m_bInCombatMode = true;
-			CombatMode *combatMode = new CombatMode(m_pPlayer, pActualMonster, pMonster);	
+			if ( pCombatMode )
+			{
+				delete pCombatMode;
+				pCombatMode = NULL;
+			}
+			pCombatMode = new CombatMode(m_pPlayer, pActualMonster, pMonster);	
 			m_pMonsters.erase( m_pMonsters.begin() + i );
+
+			CEGUI::Window *attackButton = m_pWindowManager->getWindow("AttackButton");
+			CEGUI::Window *itemButton = m_pWindowManager->getWindow("ItemButton");
+			CEGUI::Window *fleeButton = m_pWindowManager->getWindow("FleeButton");
+
+			m_pAttackWindow = m_pWindowManager->getWindow("AttackRoot");
+			CEGUI::Window *hitButton = m_pWindowManager->getWindow("AttackButton1");
+			m_pThunderButton = m_pWindowManager->getWindow("AttackButton2");
+			m_pDoubleButton = m_pWindowManager->getWindow("AttackButton3");
+			CEGUI::Window *backButton = m_pWindowManager->getWindow("AttackButton4");
+			attackButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Attack, pCombatMode));
+			itemButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Item, pCombatMode));
+			fleeButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Flee, pCombatMode));
+
+			hitButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Hit, pCombatMode));
+			m_pThunderButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Thunder, pCombatMode));
+			m_pDoubleButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Double, pCombatMode));
+			backButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Back, pCombatMode));
+
+			m_vCameraPos = m_pCamera->getPosition();
 		}
 	}
 
@@ -1215,7 +1246,6 @@ void CGameEngine::SetGUIMode( GUIMode mode )
 	m_pMainmenu->setVisible( false );
 	m_pCounterbox->setVisible( false );
 	m_pInsanityBar->setVisible( false );
-	m_pTorchescounter->setVisible ( false );
 
 	m_bMapVisible = false;
 	m_pMap->setVisible (false);
@@ -1241,7 +1271,7 @@ void CGameEngine::SetGUIMode( GUIMode mode )
 		break;
 	case ADVENTURE:
 		m_pCounterbox->setVisible( true );
-		m_pInsanityBar->setVisible( false );
+		m_pInsanityBar->setVisible( true );
 		break;
 	case BATTLEMODEMENU:
 		m_pCombatWindow->setVisible(true);

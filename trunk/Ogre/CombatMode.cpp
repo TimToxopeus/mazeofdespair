@@ -1,4 +1,4 @@
-#include "CombatMode.h"
+//#include "CombatMode.h"
 #include "GameEngine.h"
 
 CombatMode::CombatMode(CPlayer *pCPlayer, CCombatant *pCCombatant, CMonster *pMonster)
