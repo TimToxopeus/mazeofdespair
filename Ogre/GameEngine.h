@@ -168,6 +168,7 @@ private:
 	// Combat stuff
 	Ogre::Vector3 m_vCameraPos;
 	bool m_bInCombatMode;
+	CombatMode *pCombatMode;
 	Light *m_pCombatLight;
 
 	// Timer for windows.

@@ -61,6 +61,7 @@ CGameEngine::CGameEngine()
 	m_pItems = NULL;
 	m_pInventory = NULL;
 	m_pEquipment = NULL;
+	pCombatMode = NULL;
 }
 
 bool CGameEngine::Init()
@@ -396,15 +397,6 @@ bool CGameEngine::Init()
 		m_pPlayerRageBar = static_cast<CEGUI::ProgressBar*>(m_pWindowManager->getWindow("PlayerRage"));
 		m_pEnemyHealthBar = static_cast<CEGUI::ProgressBar*>(m_pWindowManager->getWindow("EnemyHealth"));
 
-		/*attackButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Attack, this));
-		itemButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Item, this));
-		fleeButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Flee, this));
-
-		hitButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Hit));
-		m_pThunderButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Thunder, this));
-		m_pDoubleButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Double, this));
-		backButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Back, this));*/
-		
 		//m_pThunderButton->disable();
 		//m_pDoubleButton->disable();
 	m_pCombatWindow->setVisible(false);
