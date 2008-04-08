@@ -61,3 +61,8 @@ bool CMonster::frameStarted(const FrameEvent &evt)
 	m_pNode->yaw( Radian(0.003f) );
 	return true;
 }
+
+void CMonster::BeginAttackMode()
+{
+
+}

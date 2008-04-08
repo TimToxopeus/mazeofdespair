@@ -27,6 +27,7 @@ using namespace Ogre;
 
 #include "Player.h"
 #include "Combatant.h"
+#include "CombatMode.h"
 #include "RandomizedFactory.h"
 
 #define CAMERA_NAME "SceneCamera"
@@ -36,7 +37,9 @@ enum GUIMode
 	NONE,
 	MAINMENU,
 	CITY,
-	ADVENTURE
+	ADVENTURE,
+	BATTLEMODEMENU,
+	BATTLEMODEATTACK
 };
 
 class CGameEngine : public FrameListener, WindowEventListener, public OIS::MouseListener
@@ -148,6 +151,25 @@ private:
 	CEGUI::Window *m_pMapPlayer;
 	CEGUI::Imageset *m_pMapWallSet;
 
+	// Window objects for the combat mode.
+	CEGUI::Window *m_pCombatWindow;
+	CEGUI::Window *m_pAttackWindow;
+	CEGUI::Window *m_pCombatBars;
+	CEGUI::ProgressBar *m_pPlayerHealthBar;	
+	CEGUI::ProgressBar *m_pPlayerRageBar;	
+	CEGUI::ProgressBar *m_pEnemyHealthBar;
+	CEGUI::Window *m_pCombatText;
+	CEGUI::Window *m_pCombatMenu;
+	CEGUI::Window *m_pAttackMenu;
+	
+	CEGUI::Window *m_pThunderButton;
+	CEGUI::Window *m_pDoubleButton;
+	
+	// Combat stuff
+	Ogre::Vector3 m_vCameraPos;
+	bool m_bInCombatMode;
+	Light *m_pCombatLight;
+
 	// Timer for windows.
 	Real m_fMessageTime;
 
@@ -161,6 +183,7 @@ public:
 
 	void SetupViewport(RenderWindow *pWindow, SceneManager *pCurrent);
 	static void Swap(SceneManager *&first, SceneManager *&second);
+	void SetCameraPosition(Vector3 pVec);
 
 	// Function that loads and sets up the tutorial level.
 	bool LoadLevel( const CEGUI::EventArgs &e );
@@ -176,7 +199,8 @@ public:
 	bool ClickItem( const CEGUI::EventArgs &e );
 	bool BuySellItem( const CEGUI::EventArgs &e );
 	bool EquipDequipItem( const CEGUI::EventArgs &e );
-	bool NextLevel( const CEGUI::EventArgs &e );							// Function that sets up the next level
+	bool NextLevel( const CEGUI::EventArgs &e );										// Function that sets up the next level.
+	void ContinueGame(CCombatant *pActualMonster, CMonster *pMonster);					//Continues the game after combat.
 
 	void Clean();
 	void Shutdown();
@@ -210,6 +234,8 @@ public:
 	// GUI
 	CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID);
 	void SetGUIMode( GUIMode mode );
+	void SetCombatText ( CEGUI::String pText );
+	void UpdateRageButtons();
 
 	// Mouse events
 	bool mouseMoved(const OIS::MouseEvent &arg);
@@ -217,5 +243,4 @@ public:
 	bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 	void onLeftPressed(const OIS::MouseEvent &arg);
 	void onRightPressed(const OIS::MouseEvent &arg);
-
 };

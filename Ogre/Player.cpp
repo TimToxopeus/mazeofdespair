@@ -10,6 +10,7 @@ CPlayer::CPlayer()
 	m_iAttackPower = 10;
 	m_iDefense = 10;
 	m_iCurHP = m_iMaxHP = 20;
+	m_iRage = 0;
 
 	for ( int i = 0; i <10; i++ )
 	{
@@ -204,4 +205,62 @@ int CPlayer::GetRealIndex( int index, bool equipment )
 	if ( i == 0 )
 		return a;
 	return -1;
+}
+
+int CPlayer::GetRage()
+{
+	return m_iRage;
+}
+
+void CPlayer::AddRage(int pRage)
+{
+	m_iRage += pRage;
+}
+
+int CPlayer::ThunderStrike(CCombatant *pVictim)
+{
+	// If the player has enough rage, execute the attack.
+	if ( m_iRage > 4 ) 
+	{
+		// Only subtract 4, since the player gets 1 Rage point for attacking.
+		m_iRage -= 4;
+		int diff = m_iAttackPower - pVictim->GetDef();
+		int hit = 35 + diff;
+		int roll = rand()%100 + 1;
+		if ( roll < hit )
+		{
+			int damage = 4;
+			if ( diff > 0 )
+				damage += diff;
+			pVictim->TakeDamage( damage );
+
+			return damage;
+		}
+	}
+
+	return 0;
+}
+
+int CPlayer::DoubleSlash(CCombatant *pVictim)
+{
+	// If the player has enough rage, execute the attack.
+	if ( m_iRage > 7 ) 
+	{
+		// Only subtract 6, since the player gets 2 Rage points for attacking.
+		m_iRage -= 6;
+		int diff = m_iAttackPower - pVictim->GetDef();
+		int hit = 35 + diff;
+		int roll = rand()%100 + 1;
+		if ( roll < hit )
+		{
+			int damage = 6;
+			if ( diff > 0 )
+				damage += diff;
+			pVictim->TakeDamage( damage );
+
+			return damage;
+		}
+	}
+
+	return 0;
 }
