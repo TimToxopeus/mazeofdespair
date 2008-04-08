@@ -43,4 +43,6 @@ public:
 	int getTileY() { return m_iTileY; }
 	Entity *getEntity() { return m_pEntity; }
 	SceneNode *getNode() { return m_pNode; }
+
+	void BeginAttackMode();
 };

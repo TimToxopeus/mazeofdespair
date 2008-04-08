@@ -14,6 +14,7 @@ protected:
 	CItem *m_Equipment[10];
 	CItem *m_Inventory[10];
 	int GetRealIndex( int index, bool equipment );
+	int m_iRage;
 
 public:
 	CPlayer();
@@ -21,6 +22,9 @@ public:
 	virtual int GetATP();
 	virtual int GetDef();
 	virtual int GetMaxHP();
+	
+	int GetRage();
+	void AddRage(int pRage);
 
 	bool AddItemToInventory( CItem *item );
 	void DeductCash( int amount ) { m_iGold -= amount; }
@@ -31,4 +35,9 @@ public:
 
 	void SellItemFromEquipment( int index );
 	void SellItemFromInventory( int index );
+
+	int ThunderStrike(CCombatant *pCCombatant);
+	int DoubleSlash(CCombatant *pCCombatant);
+
+
 };

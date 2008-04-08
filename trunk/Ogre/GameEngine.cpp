@@ -1,4 +1,3 @@
-#pragma warning(disable : 4018)
 /************************************************************************************
 *	Assignment 5 - The maze of despair												*
 *	Tim Toxopeus - 3206947															*
@@ -37,7 +36,7 @@ bool CGameEngine::Load()
 	m_pFlashlight2->setDiffuseColour(1.0, 1.0, 1.0);
 	m_pFlashlight2->setSpecularColour(1.0, 1.0, 1.0);
 	m_pFlashlight2->setAttenuation( 150, 1.0f, 0.005f, 0.0f );
-	m_pFlashlight2->setPosition(m_pCamera->getPosition());
+	m_pFlashlight2->setPosition(m_pCamera->getPosition());	
 
 	return true;
 }
@@ -339,8 +338,8 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 				m_pMessageBox->setVisible( true );
 				m_pMessageBoxText->setText("You ran out of torches! You are losing your mind!");
 				m_fMessageTime = 5;
-			}
 		}
+			}
 		else
 		{
 			m_pMessageBox->setVisible( true );
@@ -365,11 +364,26 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 	}
 
 	if( m_pKeyboard->isKeyDown(KC_V) && m_fTimeUntilNextToggle <= 0 )
-	{
-		// Swap scenemanagers  
-		Swap(m_pPrimary, m_pSecondary);
-	
-		SetupViewport(m_pWindow, m_pPrimary);
+	{	
+		Vector3 vec = (m_pPrimary->getEntity("CeilingEntity")->getParentSceneNode()->getPosition() * 5);
+		Ogre::LogManager::getSingleton().logMessage("Vector!: " + itoa2(vec.x) + "," + itoa2(vec.y) + "," + itoa2(vec.z));
+		/*if ( !m_pCombatWindow->isVisible() )
+		{
+			m_bInCombatMode = true;
+			m_pCombatWindow->setVisible(true);
+			m_pCombatMenu->setVisible(true);
+			m_pCombatText->setVisible(true);
+			m_pCamera->setPosition(m_pPrimary->getEntity("CeilingEntity")->getParentSceneNode()->getPosition() * 5);
+		}
+		else
+		{
+			m_bInCombatMode = false;
+			m_pCamera->setPosition(m_vCameraPos);
+			m_pCombatWindow->setVisible(false);
+			m_pCombatMenu->setVisible(false);
+			m_pCombatText->setVisible(false);
+		}*/
+		m_fTimeUntilNextToggle = 0.5;
 	}
 
 	if( m_pKeyboard->isKeyDown(KC_T) && m_fTimeUntilNextToggle <= 0 )
@@ -433,174 +447,181 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 	return true;
 }
 
-//===============================================================
-// Other
-//===============================================================
 void CGameEngine::moveCamera()
 {
-	// Make all the changes to the camera	
-	Vector3 pos = m_pCamera->getPosition();
-	Vector3 move = m_vTranslateVector;
-	move.normalise();
-	m_pCamera->moveRelative(move * 10);
-	
-	// If the player has selected the key
-	if ( m_bKeySelected && m_pKeys.size() > 0 )
+	if ( !m_bInCombatMode )
 	{
-		// Get the key-scenenode
-		SceneNode * scen = m_pKeys[0]->getSceneNode();
-		// Set the key in front of the camera.
-		scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
+		// Make all the changes to the camera	
+		Vector3 pos = m_pCamera->getPosition();
+		Vector3 move = m_vTranslateVector;
+		move.normalise();
+		m_pCamera->moveRelative(move * 10);
 		
-		// If the camera collides or the key collides, respond.
-		if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) || m_pMapLoader->hasCube(scen->getPosition(),true) )
+		// If the player has selected the key
+		if ( m_bKeySelected && m_pKeys.size() > 0 )
 		{
-			// Set camera position and don't translate
-			m_pCamera->setPosition(pos);
+			// Get the key-scenenode
+			SceneNode * scen = m_pKeys[0]->getSceneNode();
 			// Set the key in front of the camera.
 			scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
-		}
-		else // otherwise translate camera and set the key in front of the camera.
-		{
-			m_pCamera->setPosition(pos);
-			m_pCamera->moveRelative(m_vTranslateVector);
-			scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
-		}
-	}
-	else // If the key is not selected, only calculate camera.
-	{
-		if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) )
-		{
-			m_pCamera->setPosition(pos);
-		}
-		else
-		{
-			m_pCamera->setPosition(pos);
-			m_pCamera->moveRelative(m_vTranslateVector);
-		}
-	}
-
-	// Check if we are on top of an item and if we can pick it up
-	int clippedX, clippedY; // Clip camera position
-	Vector3 position = m_pCamera->getPosition();
-	clippedX = (position.x + 50 - (((int)position.x + 50) % 100)) / 100;
-	clippedY = (position.z + 50 - (((int)position.z + 50) % 100)) / 100;
-
-	// Loop through items to check if we picked one up
-	for ( int i = 0; i<m_pLevelItems.size(); i++ )
-	{
-		CLevelItem *pItem = m_pLevelItems[i];
-		if ( ((pItem->getTileX() * 3) + 1) == clippedX && ((pItem->getTileY() * 3) + 1) == clippedY )
-		{
-			CItem *pActualItem = m_pFactory->GetRandomItem(rand()%10, m_iLevel);
-			if ( m_pPlayer->AddItemToInventory( pActualItem ) )
+			
+			// If the camera collides or the key collides, respond.
+			if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) || m_pMapLoader->hasCube(scen->getPosition(),true) )
 			{
-				string text = "You have picked up an item!\nName:" + pActualItem->GetName() + "\nBonus: +" + itoa2(pActualItem->GetBonus()) + " " + pActualItem->GetBonusString() + "\nValue: " + itoa2(pActualItem->GetValue()) + " goldpieces";
-				m_pMessageBox->setVisible( true );
-				m_pMessageBoxText->setText(text.c_str());
-				m_fMessageTime = 5;
-
-				// Remove item from level
-				m_pPrimary->destroyEntity( pItem->getEntity() );
-				m_pPrimary->getRootSceneNode()->removeChild(pItem->getNode());
-				delete m_pLevelItems[i];
-				m_pLevelItems.erase( m_pLevelItems.begin() + i );
-				break;
+				// Set camera position and don't translate
+				m_pCamera->setPosition(pos);
+				// Set the key in front of the camera.
+				scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
+			}
+			else // otherwise translate camera and set the key in front of the camera.
+			{
+				m_pCamera->setPosition(pos);
+				m_pCamera->moveRelative(m_vTranslateVector);
+				scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
+			}
+		}
+		else // If the key is not selected, only calculate camera.
+		{
+			if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) )
+			{
+				m_pCamera->setPosition(pos);
 			}
 			else
 			{
-				m_pMessageBox->setVisible( true );
-				m_pMessageBoxText->setText("Your inventory is too full! Too bad!\n");
-				m_fMessageTime = 3;
-				delete pActualItem;
-				break;
+				m_pCamera->setPosition(pos);
+				m_pCamera->moveRelative(m_vTranslateVector);
 			}
 		}
-	}
 
-	// Loop through monsters to check if we need to start combat
-	for ( int i = 0; i<m_pMonsters.size(); i++ )
-	{
-		CMonster *pMonster = m_pMonsters[i];
-		if ( ((pMonster->getTileX() * 3) + 1) == clippedX && ((pMonster->getTileY() * 3) + 1) == clippedY )
+		// Check if we are on top of an item and if we can pick it up
+		int clippedX, clippedY; // Clip camera position
+		Vector3 position = m_pCamera->getPosition();
+		clippedX = (position.x + 50 - (((int)position.x + 50) % 100)) / 100;
+		clippedY = (position.z + 50 - (((int)position.z + 50) % 100)) / 100;
+
+		// Loop through items to check if we picked one up
+		for ( int i = 0; i<m_pLevelItems.size(); i++ )
 		{
-			CCombatant *pActualMonster = m_pFactory->GetRandomMonster(m_iLevel);
-			Ogre::LogManager::getSingleton().logMessage("Starting battle with " + pActualMonster->GetName() );
-			// Start combat!
-			// Player: m_pPlayer
-			// Combatant: pActualMonster
-			delete pActualMonster;
-			m_pPrimary->destroyEntity( pMonster->getEntity() );
-			m_pPrimary->getRootSceneNode()->removeChild(pMonster->getNode());
-			delete m_pMonsters[i];
-			m_pMonsters.erase( m_pMonsters.begin() + i );
-		}
-	}
-
-	// Only update map data if we change tile, no point doing it every frame
-	if ( m_iOldClippedX != clippedX || m_iOldClippedY != clippedY )
-	{
-		float mapX, mapY, mapW, mapH;
-		mapW = 0.684f / m_pMapLoader->GetWidth();
-		mapH = 0.808f / m_pMapLoader->GetHeight();
-		mapX = 0.137f + (mapW * clippedX);
-		mapY = 0.067f + (mapH * clippedY);
-
-		m_pMapPlayer->setSize( CEGUI::UVector2(CEGUI::UDim(mapW, 0), CEGUI::UDim(mapH, 0)) );
-		m_pMapPlayer->setPosition( CEGUI::UVector2(CEGUI::UDim(mapX,0), CEGUI::UDim(mapY,0)) );
-
-		vector<int> erase, erase2;
-		for ( int a = 0; a<m_pHiddenCubes.size(); a++ )
-		{
-			cube *pCube = m_pHiddenCubes[a];
-			if ( pCube->x + 1 == clippedX || pCube->x == clippedX || pCube->x - 1 == clippedX )
+			CLevelItem *pItem = m_pLevelItems[i];
+			if ( ((pItem->getTileX() * 3) + 1) == clippedX && ((pItem->getTileY() * 3) + 1) == clippedY )
 			{
-				if ( pCube->y + 1 == clippedY || pCube->y == clippedY || pCube->y - 1 == clippedY )
+				CLevelItem *pItem = m_pLevelItems[i];
+				if ( ((pItem->getTileX() * 3) + 1) == clippedX && ((pItem->getTileY() * 3) + 1) == clippedY )
 				{
-					m_pDiscoveredCubes.push_back( pCube );
-					erase.push_back(a);
+					CItem *pActualItem = m_pFactory->GetRandomItem(rand()%10, m_iLevel);
+					if ( m_pPlayer->AddItemToInventory( pActualItem ) )
+					{
+						string text = "You have picked up an item!\nName:" + pActualItem->GetName() + "\nBonus: +" + itoa2(pActualItem->GetBonus()) + " " + pActualItem->GetBonusString() + "\nValue: " + itoa2(pActualItem->GetValue()) + " goldpieces";
+						m_pMessageBox->setVisible( true );
+						m_pMessageBoxText->setText(text.c_str());
+						m_fMessageTime = 5;
 
-					// Add the new tile to the map
-					mapX = 0.137f + (mapW * pCube->x);
-					mapY = 0.067f + (mapH * pCube->y);
-
-					string tilename = "Root/Map/Tile" + itoa2(pCube->x) + "," + itoa2(pCube->y);
-					CEGUI::Window *m_pTile = m_pWindowManager->createWindow("TaharezLook/StaticImage", tilename.c_str());
-					m_pTile->setSize( CEGUI::UVector2(CEGUI::UDim(mapW, 0), CEGUI::UDim(mapH, 0)) );
-					m_pTile->setPosition( CEGUI::UVector2(CEGUI::UDim(mapX,0), CEGUI::UDim(mapY,0)) );
-					m_pTile->setProperty("Image", CEGUI::PropertyHelper::imageToString(&m_pMapWallSet->getImage((CEGUI::utf8*)"Dirt.jpg")));
-					m_pMap->addChildWindow(m_pTile);
+						// Remove item from level
+						m_pPrimary->destroyEntity( pItem->getEntity() );
+						m_pPrimary->getRootSceneNode()->removeChild(pItem->getNode());
+						delete m_pLevelItems[i];
+						m_pLevelItems.erase( m_pLevelItems.begin() + i );
+						break;
+					}
+					else
+					{
+						m_pMessageBox->setVisible( true );
+						m_pMessageBoxText->setText("Your inventory is too full! Too bad!\n");
+						m_fMessageTime = 3;
+						delete pActualItem;
+						break;
+					}
 				}
 			}
 		}
 
-		// Erase cubes in backwards order to maintain index correctness
-		for ( int a = erase.size() - 1; a >= 0; a-- )
+		// Loop through monsters to check if we need to start combat
+		for ( int i = 0; i<m_pMonsters.size(); i++ )
 		{
-			m_pHiddenCubes.erase( m_pHiddenCubes.begin() + erase[a] );
+			CMonster *pMonster = m_pMonsters[i];
+			if ( ((pMonster->getTileX() * 3) + 1) == clippedX && ((pMonster->getTileY() * 3) + 1) == clippedY )
+			{
+				CCombatant *pActualMonster = m_pFactory->GetRandomMonster(m_iLevel);
+				m_pCombatText->setText( "Starting battle with " + pActualMonster->GetName() );
+				// Start combat!
+				m_bInCombatMode = true;
+				CombatMode *combatMode = new CombatMode(m_pPlayer, pActualMonster, pMonster);	
+				m_pMonsters.erase( m_pMonsters.begin() + i );
+			}
 		}
 
-		m_iOldClippedX = clippedX;
-		m_iOldClippedY = clippedY;
-	}
 
-	// Calculate flashlight position and direction, based on the camera position.
-	m_pFlashlight->setPosition(m_pCamera->getPosition() - (m_pCamera->getDirection() * 50));
-	m_pFlashlight->setDirection(m_pCamera->getDirection());
-	m_pFlashlight2->setPosition(m_pCamera->getPosition());
-
-	// Show the light swith tip
-	if ( !m_bDisplayedSwitchTip && m_pSwitches.size() > 0 )
-	{
-		Real dst = m_pSwitches[0]->getSceneNode()->getPosition().distance( m_pCamera->getPosition() );
-		if ( dst < 200 )
+		// Only update map data if we change tile, no point doing it every frame
+		if ( m_iOldClippedX != clippedX || m_iOldClippedY != clippedY )
 		{
-			m_pMessageBox->setVisible( true );
-			m_pMessageBoxText->setText("The floating robot is actually a secret link up to the lighting of the maze!\nClicking on it will give you a hint to the key!");
-			m_fMessageTime = 5;
-			m_bDisplayedSwitchTip = true;
+			float mapX, mapY, mapW, mapH;
+			mapW = 0.684f / m_pMapLoader->GetWidth();
+			mapH = 0.808f / m_pMapLoader->GetHeight();
+			mapX = 0.137f + (mapW * clippedX);
+			mapY = 0.067f + (mapH * clippedY);
+
+			m_pMapPlayer->setSize( CEGUI::UVector2(CEGUI::UDim(mapW, 0), CEGUI::UDim(mapH, 0)) );
+			m_pMapPlayer->setPosition( CEGUI::UVector2(CEGUI::UDim(mapX,0), CEGUI::UDim(mapY,0)) );
+
+			vector<int> erase, erase2;
+			for ( int a = 0; a<m_pHiddenCubes.size(); a++ )
+			{
+				vector<int> erase, erase2;
+				for ( int a = 0; a<m_pHiddenCubes.size(); a++ )
+				{
+					cube *pCube = m_pHiddenCubes[a];
+					if ( pCube->x + 1 == clippedX || pCube->x == clippedX || pCube->x - 1 == clippedX )
+					{
+						if ( pCube->y + 1 == clippedY || pCube->y == clippedY || pCube->y - 1 == clippedY )
+						{
+							m_pDiscoveredCubes.push_back( pCube );
+							erase.push_back(a);
+						}
+
+						// Add the new tile to the map
+						mapX = 0.137f + (mapW * pCube->x);
+						mapY = 0.067f + (mapH * pCube->y);
+
+						string tilename = "Root/Map/Tile" + itoa2(pCube->x) + "," + itoa2(pCube->y);
+						CEGUI::Window *m_pTile = m_pWindowManager->createWindow("TaharezLook/StaticImage", tilename.c_str());
+						m_pTile->setSize( CEGUI::UVector2(CEGUI::UDim(mapW, 0), CEGUI::UDim(mapH, 0)) );
+						m_pTile->setPosition( CEGUI::UVector2(CEGUI::UDim(mapX,0), CEGUI::UDim(mapY,0)) );
+						m_pTile->setProperty("Image", CEGUI::PropertyHelper::imageToString(&m_pMapWallSet->getImage((CEGUI::utf8*)"Dirt.jpg")));
+						m_pMap->addChildWindow(m_pTile);
+					}
+				}
+
+				// Erase cubes in backwards order to maintain index correctness
+				for ( int a = erase.size() - 1; a >= 0; a-- )
+				{
+					m_pHiddenCubes.erase( m_pHiddenCubes.begin() + erase[a] );
+				}
+
+				m_iOldClippedX = clippedX;
+				m_iOldClippedY = clippedY;
+			}
 		}
+
+		// Calculate flashlight position and direction, based on the camera position.
+		m_pFlashlight->setPosition(m_pCamera->getPosition() - (m_pCamera->getDirection() * 50));
+		m_pFlashlight->setDirection(m_pCamera->getDirection());
+		m_pFlashlight2->setPosition(m_pCamera->getPosition());
+
+		// Show the light swith tip
+		if ( !m_bDisplayedSwitchTip && m_pSwitches.size() > 0 )
+		{
+			Real dst = m_pSwitches[0]->getSceneNode()->getPosition().distance( m_pCamera->getPosition() );
+			if ( dst < 200 )
+			{
+				m_pMessageBox->setVisible( true );
+				m_pMessageBoxText->setText("The floating robot is actually a secret link up to the lighting of the maze!\nClicking on it will give you a hint to the key!");
+				m_fMessageTime = 5;
+				m_bDisplayedSwitchTip = true;
+			}
+		}
+		m_vCameraPos = m_pCamera->getPosition();
 	}
+	
 }
 
 void CGameEngine::toggleLights()
@@ -655,10 +676,11 @@ bool CGameEngine::mouseMoved(const OIS::MouseEvent &arg)
 
 bool CGameEngine::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
+	///Ogre::LogManager::getSingleton().logMessage("GUIMODE");
 	m_pGUISystem->injectMouseButtonDown(convertButton(id));
 
-	if ( m_pMainmenu->isVisible() == false && m_pCity->isVisible() == false )
-	{
+	//if ( m_pMainmenu->isVisible() == false && m_pCity->isVisible() == false )
+	//{
 		if (id == OIS::MB_Left)
 		{
 			mLMouseDown = true;
@@ -671,7 +693,7 @@ bool CGameEngine::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id
 			// Hide the mouse cursor when rotating the camera.
 			CEGUI::MouseCursor::getSingleton().hide();		
 		}
-	}
+	//}
 
     return true;
 }
@@ -812,6 +834,13 @@ void CGameEngine::onRightPressed(const OIS::MouseEvent &arg)
 	}
 }
 
+void CGameEngine::SetCameraPosition(Vector3 pVec)
+{
+	m_pCamera->setPosition(pVec);
+	//m_pCamera->yaw(Degree());
+}
+
+
 bool CGameEngine::LoadLevel( const CEGUI::EventArgs &e )
 {
 	Clean();
@@ -840,9 +869,10 @@ bool CGameEngine::LoadLevel( const CEGUI::EventArgs &e )
 }
 
 bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
-{
+{		
 	m_iLevel = 0;
 	m_iTorchCount = 10;
+	m_pPlayer = new CPlayer(); 
 
 	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
 	CEGUI::String senderID = we.window->getName();
@@ -864,13 +894,12 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 		NextLevel(e);
 		m_pHiddenCubes = m_pMapLoader->GetCubes();
 
-
 		m_iOldClippedX = m_iOldClippedY = -1;
 
 		m_bInAdventureMode = true;
 		m_bDisplayedSwitchTip = false;
-		SetGUIMode( ADVENTURE );
-
+		SetGUIMode( ADVENTURE );	
+	
 		m_pMessageBox->setVisible( true );
 		m_pMessageBoxText->setText("In adventure mode you have to defeat the ninja before going insane.\nWhen you run out of torches you will slowly lose your mind in the dark!");
 		m_fMessageTime = 10;
@@ -881,7 +910,15 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 		Load();
 		ShowCity();
 	}
+	// Set up combat light.
+	m_pCombatLight = m_pPrimary->createLight("CombatLight");
+    m_pCombatLight->setType(Light::LT_POINT);    
+	m_pCombatLight->setDiffuseColour(1.0, 0.0, 0.0);
+    m_pCombatLight->setSpecularColour(1.0, 0.0, 0.0);
+	m_pCombatLight->setPosition(8755, 0, 8755);
+	m_pCombatLight->setVisible(true);
 
+	
 	return true;
 }
 
@@ -892,7 +929,7 @@ bool CGameEngine::Quit( const CEGUI::EventArgs &e )
 }
 
 bool CGameEngine::NextLevel( const CEGUI::EventArgs &e )
-{
+{	
 	Clean();
 	Load();
 
@@ -915,6 +952,7 @@ bool CGameEngine::NextLevel( const CEGUI::EventArgs &e )
 
 	m_iTorchCount += m_iLevel;
 	m_iLevel += 1;
+
 	return true;
 }
 
@@ -1186,9 +1224,16 @@ void CGameEngine::SetGUIMode( GUIMode mode )
 	m_pMainmenu->setVisible( false );
 	m_pCounterbox->setVisible( false );
 	m_pInsanityBar->setVisible( false );
+	m_pTorchescounter->setVisible ( false );
 
 	m_bMapVisible = false;
-	m_pMap->setVisible( false );
+	m_pMap->setVisible (false);
+
+	m_pCombatWindow->setVisible(false);
+	m_pCombatMenu->setVisible(false);
+	m_pCombatText->setVisible(false);
+	m_pAttackWindow->setVisible(false);
+	m_pCombatBars->setVisible(false);
 
 	switch (mode)
 	{
@@ -1207,8 +1252,61 @@ void CGameEngine::SetGUIMode( GUIMode mode )
 		m_pCounterbox->setVisible( true );
 		m_pInsanityBar->setVisible( false );
 		break;
+	case BATTLEMODEMENU:
+		m_pCombatWindow->setVisible(true);
+		m_pCombatMenu->setVisible(true);
+		m_pCombatBars->setVisible(true);
+		m_pCombatText->setVisible(true);
+		break;
+	case BATTLEMODEATTACK:
+		m_pAttackWindow->setVisible(true);
+		m_pCombatText->setVisible(true);
+		m_pCombatBars->setVisible(true);
+		break;
 	case NONE:
 	default:
 		break;
 	}
 }
+
+void CGameEngine::SetCombatText ( CEGUI::String pText )
+{
+	m_pCombatText->setText( pText );
+}
+
+void CGameEngine::UpdateRageButtons()
+{
+	if ( m_pPlayer->GetRage() > 4 )
+	{
+		m_pThunderButton->enable();
+	}
+	else 
+	{
+		m_pThunderButton->disable();
+	}
+	if ( m_pPlayer->GetRage() > 7 )
+	{
+		m_pDoubleButton->enable();
+	}
+	else 
+	{
+		m_pDoubleButton->disable();
+	}
+}
+
+void CGameEngine::ContinueGame(CCombatant *pActualMonster, CMonster *pMonster)
+{
+	m_bInCombatMode = false;
+	m_pCamera->setPosition(m_vCameraPos);
+	m_pCombatLight->setVisible(false);
+	SetGUIMode ( ADVENTURE );
+
+	// Delete Combatant and Monster objects.
+	delete pActualMonster;
+	m_pPrimary->destroyEntity( pMonster->getEntity() );
+	m_pPrimary->getRootSceneNode()->removeChild(pMonster->getNode());
+	delete pMonster;
+	//m_pMonsters.at(.erase( m_pMonsters.begin() + i );
+}
+
+
