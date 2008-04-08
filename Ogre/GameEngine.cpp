@@ -16,6 +16,8 @@
 using namespace std;
 extern std::string itoa2(const int x);
 
+int test = 0;
+
 bool CGameEngine::Load()
 {
 	// Load own objects
@@ -449,179 +451,174 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 
 void CGameEngine::moveCamera()
 {
-	if ( !m_bInCombatMode )
+	if ( m_bInCombatMode )
+		return;
+
+	// Make all the changes to the camera	
+	Vector3 pos = m_pCamera->getPosition();
+	Vector3 move = m_vTranslateVector;
+	move.normalise();
+	m_pCamera->moveRelative(move * 10);
+	
+	// If the player has selected the key
+	if ( m_bKeySelected && m_pKeys.size() > 0 )
 	{
-		// Make all the changes to the camera	
-		Vector3 pos = m_pCamera->getPosition();
-		Vector3 move = m_vTranslateVector;
-		move.normalise();
-		m_pCamera->moveRelative(move * 10);
+		// Get the key-scenenode
+		SceneNode * scen = m_pKeys[0]->getSceneNode();
+		// Set the key in front of the camera.
+		scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
 		
-		// If the player has selected the key
-		if ( m_bKeySelected && m_pKeys.size() > 0 )
+		// If the camera collides or the key collides, respond.
+		if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) || m_pMapLoader->hasCube(scen->getPosition(),true) )
 		{
-			// Get the key-scenenode
-			SceneNode * scen = m_pKeys[0]->getSceneNode();
+			// Set camera position and don't translate
+			m_pCamera->setPosition(pos);
 			// Set the key in front of the camera.
 			scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
-			
-			// If the camera collides or the key collides, respond.
-			if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) || m_pMapLoader->hasCube(scen->getPosition(),true) )
-			{
-				// Set camera position and don't translate
-				m_pCamera->setPosition(pos);
-				// Set the key in front of the camera.
-				scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
-			}
-			else // otherwise translate camera and set the key in front of the camera.
-			{
-				m_pCamera->setPosition(pos);
-				m_pCamera->moveRelative(m_vTranslateVector);
-				scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
-			}
 		}
-		else // If the key is not selected, only calculate camera.
+		else // otherwise translate camera and set the key in front of the camera.
 		{
-			if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) )
+			m_pCamera->setPosition(pos);
+			m_pCamera->moveRelative(m_vTranslateVector);
+			scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
+		}
+	}
+	else // If the key is not selected, only calculate camera.
+	{
+		if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) )
+		{
+			m_pCamera->setPosition(pos);
+		}
+		else
+		{
+			m_pCamera->setPosition(pos);
+			m_pCamera->moveRelative(m_vTranslateVector);
+		}
+	}
+
+	// Check if we are on top of an item and if we can pick it up
+	int clippedX, clippedY; // Clip camera position
+	Vector3 position = m_pCamera->getPosition();
+	clippedX = (position.x + 50 - (((int)position.x + 50) % 100)) / 100;
+	clippedY = (position.z + 50 - (((int)position.z + 50) % 100)) / 100;
+
+	// Loop through items to check if we picked one up
+	for ( int i = 0; i<m_pLevelItems.size(); i++ )
+	{
+		CLevelItem *pItem = m_pLevelItems[i];
+		if ( ((pItem->getTileX() * 3) + 1) == clippedX && ((pItem->getTileY() * 3) + 1) == clippedY )
+		{
+			CItem *pActualItem = m_pFactory->GetRandomItem(rand()%10, m_iLevel);
+			if ( m_pPlayer->AddItemToInventory( pActualItem ) )
 			{
-				m_pCamera->setPosition(pos);
+				string text = "You have picked up an item!\nName:" + pActualItem->GetName() + "\nBonus: +" + itoa2(pActualItem->GetBonus()) + " " + pActualItem->GetBonusString() + "\nValue: " + itoa2(pActualItem->GetValue()) + " goldpieces";
+				m_pMessageBox->setVisible( true );
+				m_pMessageBoxText->setText(text.c_str());
+				m_fMessageTime = 5;
+
+				// Remove item from level
+				m_pPrimary->destroyEntity( pItem->getEntity() );
+				m_pPrimary->getRootSceneNode()->removeChild(pItem->getNode());
+				delete m_pLevelItems[i];
+				m_pLevelItems.erase( m_pLevelItems.begin() + i );
+				break;
 			}
 			else
 			{
-				m_pCamera->setPosition(pos);
-				m_pCamera->moveRelative(m_vTranslateVector);
+				m_pMessageBox->setVisible( true );
+				m_pMessageBoxText->setText("Your inventory is too full! Too bad!\n");
+				m_fMessageTime = 3;
+				delete pActualItem;
+				break;
 			}
 		}
+	}
 
-		// Check if we are on top of an item and if we can pick it up
-		int clippedX, clippedY; // Clip camera position
-		Vector3 position = m_pCamera->getPosition();
-		clippedX = (position.x + 50 - (((int)position.x + 50) % 100)) / 100;
-		clippedY = (position.z + 50 - (((int)position.z + 50) % 100)) / 100;
-
-		// Loop through items to check if we picked one up
-		for ( int i = 0; i<m_pLevelItems.size(); i++ )
+	// Loop through monsters to check if we need to start combat
+	for ( int i = 0; i<m_pMonsters.size(); i++ )
+	{
+		CMonster *pMonster = m_pMonsters[i];
+		if ( ((pMonster->getTileX() * 3) + 1) == clippedX && ((pMonster->getTileY() * 3) + 1) == clippedY )
 		{
-			CLevelItem *pItem = m_pLevelItems[i];
-			if ( ((pItem->getTileX() * 3) + 1) == clippedX && ((pItem->getTileY() * 3) + 1) == clippedY )
-			{
-				CLevelItem *pItem = m_pLevelItems[i];
-				if ( ((pItem->getTileX() * 3) + 1) == clippedX && ((pItem->getTileY() * 3) + 1) == clippedY )
-				{
-					CItem *pActualItem = m_pFactory->GetRandomItem(rand()%10, m_iLevel);
-					if ( m_pPlayer->AddItemToInventory( pActualItem ) )
-					{
-						string text = "You have picked up an item!\nName:" + pActualItem->GetName() + "\nBonus: +" + itoa2(pActualItem->GetBonus()) + " " + pActualItem->GetBonusString() + "\nValue: " + itoa2(pActualItem->GetValue()) + " goldpieces";
-						m_pMessageBox->setVisible( true );
-						m_pMessageBoxText->setText(text.c_str());
-						m_fMessageTime = 5;
-
-						// Remove item from level
-						m_pPrimary->destroyEntity( pItem->getEntity() );
-						m_pPrimary->getRootSceneNode()->removeChild(pItem->getNode());
-						delete m_pLevelItems[i];
-						m_pLevelItems.erase( m_pLevelItems.begin() + i );
-						break;
-					}
-					else
-					{
-						m_pMessageBox->setVisible( true );
-						m_pMessageBoxText->setText("Your inventory is too full! Too bad!\n");
-						m_fMessageTime = 3;
-						delete pActualItem;
-						break;
-					}
-				}
-			}
-		}
-
-		// Loop through monsters to check if we need to start combat
-		for ( int i = 0; i<m_pMonsters.size(); i++ )
-		{
-			CMonster *pMonster = m_pMonsters[i];
-			if ( ((pMonster->getTileX() * 3) + 1) == clippedX && ((pMonster->getTileY() * 3) + 1) == clippedY )
-			{
-				CCombatant *pActualMonster = m_pFactory->GetRandomMonster(m_iLevel);
-				m_pCombatText->setText( "Starting battle with " + pActualMonster->GetName() );
-				// Start combat!
+			CCombatant *pActualMonster = m_pFactory->GetRandomMonster(m_iLevel);
+			Ogre::LogManager::getSingleton().logMessage("Starting battle with " + pActualMonster->GetName() );
+			// Start combat!
+			// Player: m_pPlayer
+			// Combatant: pActualMonster
 				m_bInCombatMode = true;
 				CombatMode *combatMode = new CombatMode(m_pPlayer, pActualMonster, pMonster);	
-				m_pMonsters.erase( m_pMonsters.begin() + i );
-			}
+//			delete pActualMonster;
+//			m_pPrimary->destroyEntity( pMonster->getEntity() );
+//			m_pPrimary->getRootSceneNode()->removeChild(pMonster->getNode());
+//			delete m_pMonsters[i];
+//			m_pMonsters.erase( m_pMonsters.begin() + i );
 		}
-
-
-		// Only update map data if we change tile, no point doing it every frame
-		if ( m_iOldClippedX != clippedX || m_iOldClippedY != clippedY )
-		{
-			float mapX, mapY, mapW, mapH;
-			mapW = 0.684f / m_pMapLoader->GetWidth();
-			mapH = 0.808f / m_pMapLoader->GetHeight();
-			mapX = 0.137f + (mapW * clippedX);
-			mapY = 0.067f + (mapH * clippedY);
-
-			m_pMapPlayer->setSize( CEGUI::UVector2(CEGUI::UDim(mapW, 0), CEGUI::UDim(mapH, 0)) );
-			m_pMapPlayer->setPosition( CEGUI::UVector2(CEGUI::UDim(mapX,0), CEGUI::UDim(mapY,0)) );
-
-			vector<int> erase, erase2;
-			for ( int a = 0; a<m_pHiddenCubes.size(); a++ )
-			{
-				vector<int> erase, erase2;
-				for ( int a = 0; a<m_pHiddenCubes.size(); a++ )
-				{
-					cube *pCube = m_pHiddenCubes[a];
-					if ( pCube->x + 1 == clippedX || pCube->x == clippedX || pCube->x - 1 == clippedX )
-					{
-						if ( pCube->y + 1 == clippedY || pCube->y == clippedY || pCube->y - 1 == clippedY )
-						{
-							m_pDiscoveredCubes.push_back( pCube );
-							erase.push_back(a);
-						}
-
-						// Add the new tile to the map
-						mapX = 0.137f + (mapW * pCube->x);
-						mapY = 0.067f + (mapH * pCube->y);
-
-						string tilename = "Root/Map/Tile" + itoa2(pCube->x) + "," + itoa2(pCube->y);
-						CEGUI::Window *m_pTile = m_pWindowManager->createWindow("TaharezLook/StaticImage", tilename.c_str());
-						m_pTile->setSize( CEGUI::UVector2(CEGUI::UDim(mapW, 0), CEGUI::UDim(mapH, 0)) );
-						m_pTile->setPosition( CEGUI::UVector2(CEGUI::UDim(mapX,0), CEGUI::UDim(mapY,0)) );
-						m_pTile->setProperty("Image", CEGUI::PropertyHelper::imageToString(&m_pMapWallSet->getImage((CEGUI::utf8*)"Dirt.jpg")));
-						m_pMap->addChildWindow(m_pTile);
-					}
-				}
-
-				// Erase cubes in backwards order to maintain index correctness
-				for ( int a = erase.size() - 1; a >= 0; a-- )
-				{
-					m_pHiddenCubes.erase( m_pHiddenCubes.begin() + erase[a] );
-				}
-
-				m_iOldClippedX = clippedX;
-				m_iOldClippedY = clippedY;
-			}
-		}
-
-		// Calculate flashlight position and direction, based on the camera position.
-		m_pFlashlight->setPosition(m_pCamera->getPosition() - (m_pCamera->getDirection() * 50));
-		m_pFlashlight->setDirection(m_pCamera->getDirection());
-		m_pFlashlight2->setPosition(m_pCamera->getPosition());
-
-		// Show the light swith tip
-		if ( !m_bDisplayedSwitchTip && m_pSwitches.size() > 0 )
-		{
-			Real dst = m_pSwitches[0]->getSceneNode()->getPosition().distance( m_pCamera->getPosition() );
-			if ( dst < 200 )
-			{
-				m_pMessageBox->setVisible( true );
-				m_pMessageBoxText->setText("The floating robot is actually a secret link up to the lighting of the maze!\nClicking on it will give you a hint to the key!");
-				m_fMessageTime = 5;
-				m_bDisplayedSwitchTip = true;
-			}
-		}
-		m_vCameraPos = m_pCamera->getPosition();
 	}
-	
+
+	// Only update map data if we change tile, no point doing it every frame
+	if ( m_iOldClippedX != clippedX || m_iOldClippedY != clippedY )
+	{
+		float mapX, mapY, mapW, mapH;
+		mapW = 0.684f / m_pMapLoader->GetWidth();
+		mapH = 0.808f / m_pMapLoader->GetHeight();
+		mapX = 0.137f + (mapW * clippedX);
+		mapY = 0.067f + (mapH * clippedY);
+
+		m_pMapPlayer->setSize( CEGUI::UVector2(CEGUI::UDim(mapW, 0), CEGUI::UDim(mapH, 0)) );
+		m_pMapPlayer->setPosition( CEGUI::UVector2(CEGUI::UDim(mapX,0), CEGUI::UDim(mapY,0)) );
+
+		vector<int> erase, erase2;
+		for ( int a = 0; a<m_pHiddenCubes.size(); a++ )
+		{
+			cube *pCube = m_pHiddenCubes[a];
+			if ( pCube->x + 1 == clippedX || pCube->x == clippedX || pCube->x - 1 == clippedX )
+			{
+				if ( pCube->y + 1 == clippedY || pCube->y == clippedY || pCube->y - 1 == clippedY )
+				{
+					m_pDiscoveredCubes.push_back( pCube );
+					erase.push_back(a);
+
+					// Add the new tile to the map
+					mapX = 0.137f + (mapW * pCube->x);
+					mapY = 0.067f + (mapH * pCube->y);
+
+					string tilename = "Root/Map/Tile" + itoa2(pCube->x) + "," + itoa2(pCube->y);
+					CEGUI::Window *m_pTile = m_pWindowManager->createWindow("TaharezLook/StaticImage", tilename.c_str());
+					m_pTile->setSize( CEGUI::UVector2(CEGUI::UDim(mapW, 0), CEGUI::UDim(mapH, 0)) );
+					m_pTile->setPosition( CEGUI::UVector2(CEGUI::UDim(mapX,0), CEGUI::UDim(mapY,0)) );
+					m_pTile->setProperty("Image", CEGUI::PropertyHelper::imageToString(&m_pMapWallSet->getImage((CEGUI::utf8*)"Dirt.jpg")));
+					m_pMap->addChildWindow(m_pTile);
+				}
+			}
+		}
+
+		// Erase cubes in backwards order to maintain index correctness
+		for ( int a = erase.size() - 1; a >= 0; a-- )
+		{
+			m_pHiddenCubes.erase( m_pHiddenCubes.begin() + erase[a] );
+		}
+
+		m_iOldClippedX = clippedX;
+		m_iOldClippedY = clippedY;
+	}
+
+	// Calculate flashlight position and direction, based on the camera position.
+	m_pFlashlight->setPosition(m_pCamera->getPosition() - (m_pCamera->getDirection() * 50));
+	m_pFlashlight->setDirection(m_pCamera->getDirection());
+	m_pFlashlight2->setPosition(m_pCamera->getPosition());
+
+	// Show the light swith tip
+	if ( !m_bDisplayedSwitchTip && m_pSwitches.size() > 0 )
+	{
+		Real dst = m_pSwitches[0]->getSceneNode()->getPosition().distance( m_pCamera->getPosition() );
+		if ( dst < 200 )
+		{
+			m_pMessageBox->setVisible( true );
+			m_pMessageBoxText->setText("The floating robot is actually a secret link up to the lighting of the maze!\nClicking on it will give you a hint to the key!");
+			m_fMessageTime = 5;
+			m_bDisplayedSwitchTip = true;
+		}
+	}
 }
 
 void CGameEngine::toggleLights()
