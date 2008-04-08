@@ -1,6 +1,8 @@
 //#include "CombatMode.h"
 #include "GameEngine.h"
 
+extern std::string itoa2( const int x );
+
 CombatMode::CombatMode(CPlayer *pCPlayer, CCombatant *pCCombatant, CMonster *pMonster)
 {
 	m_pPlayer = pCPlayer;
@@ -52,12 +54,12 @@ bool CombatMode::Hit( const CEGUI::EventArgs &e )
 	int damage = m_pPlayer->Attack(m_pCombatant);
 	if ( damage > 0 )
 	{
-		//CGameEngine::Instance()->SetCombatText( "You hit " + m_pCombatant->GetName() + " with " + damage + "!" );
+		CGameEngine::Instance()->SetCombatText( "You hit " + m_pCombatant->GetName() + " with " + itoa2(damage) + "!" );
 		m_pPlayer->AddRage(2);
 	}
 	else
 	{
-		//CGameEngine::Instance()->SetCombatText( "You miss " + m_pCombatant->GetName() + "!" );
+		CGameEngine::Instance()->SetCombatText( "You miss " + m_pCombatant->GetName() + "!" );
 	}
 	m_bPlayersTurn = false;
 	CanContinue();	
@@ -94,7 +96,7 @@ void CombatMode::CanContinue()
 	}
 	else if ( m_pCombatant->GetCurHP() == 0 )
 	{
-		//CGameEngine::Instance()->SetCombatText( "You have slain " + m_pCombatant->GetName() + "!");
+		CGameEngine::Instance()->SetCombatText( "You have slain " + m_pCombatant->GetName() + "!");
 		CGameEngine::Instance()->ContinueGame(m_pCombatant, m_pMonster);
 	}
 	else if ( !m_bPlayersTurn ) 
@@ -102,11 +104,11 @@ void CombatMode::CanContinue()
 		int damage = m_pCombatant->Attack(m_pPlayer);
 		if ( damage > 0 )
 		{
-			//CGameEngine::Instance()->SetCombatText( m_pCombatant->GetName()  + " hits you with " + damage + " damage!" );
+			CGameEngine::Instance()->SetCombatText( m_pCombatant->GetName()  + " hits you with " + itoa2(damage) + " damage!" );
 		}
 		else
 		{
-			//CGameEngine::Instance()->SetCombatText( m_pCombatant->GetName() + " misses you! " );
+			CGameEngine::Instance()->SetCombatText( m_pCombatant->GetName() + " misses you! " );
 		}
 		m_bPlayersTurn = true;
 		
