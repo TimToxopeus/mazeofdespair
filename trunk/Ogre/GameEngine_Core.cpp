@@ -372,8 +372,6 @@ bool CGameEngine::Init()
 	m_pImpossibleLevel->setVisible( false );
 
 	//Load the layouts
-	try
-	{
 		CEGUI::Window *combatLayout = m_pWindowManager->loadWindowLayout("CombatMode.layout");
 		CEGUI::Window *attackLayout = m_pWindowManager->loadWindowLayout("AttackMode.layout");
 		m_pSheet->addChildWindow(combatLayout);
@@ -409,12 +407,6 @@ bool CGameEngine::Init()
 		
 		//m_pThunderButton->disable();
 		//m_pDoubleButton->disable();
-	}
-	catch(CEGUI::Exception &e)
-	{
-		LogManager::getSingletonPtr()->logMessage("Errorrr");
-		LogManager::getSingletonPtr()->logMessage(e.getMessage().c_str());
-	}
 	m_pCombatWindow->setVisible(false);
 	m_pAttackWindow->setVisible(false);
 
