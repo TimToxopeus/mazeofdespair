@@ -50,7 +50,6 @@ private:
 	Camera *m_pCombatCamera;				// The camera object pointer
 	SceneNode *m_pCameraNode;
     SceneManager *m_pPrimary;				// The Primary Scene Manager object pointer
-	SceneManager *m_pSecondary;				// The Secondary Scene Manager object pointer
     RenderWindow *m_pWindow;				
 	RaySceneQuery *m_pRaySceneQuery;		// The ray scene query pointer
 
@@ -97,7 +96,7 @@ private:
 	bool m_bMapVisible;						// The boolean for displaying the map
 
 	CPlayer *m_pPlayer;
-	CRandomizedFactory *m_pFactory;
+	CRandomizedFactory *m_pFactory;			// The RandomizedFactory Class
 	bool m_bHadCityOpen;
 	int m_iSelectedType;
 	int m_iSelectedIndex;
@@ -160,8 +159,7 @@ private:
 	CEGUI::ProgressBar *m_pEnemyHealthBar;
 	CEGUI::Window *m_pCombatText;
 	CEGUI::Window *m_pCombatMenu;
-	CEGUI::Window *m_pAttackMenu;
-	
+	CEGUI::Window *m_pAttackMenu;	
 	CEGUI::Window *m_pThunderButton;
 	CEGUI::Window *m_pDoubleButton;
 	
@@ -175,15 +173,15 @@ private:
 	Real m_fMessageTime;
 
 public:
+	// Singleton function
 	static CGameEngine *Instance() { if ( !m_pInstance ) m_pInstance = new CGameEngine(); return m_pInstance; }
 	
 	// Initialize 
 	bool Init();
 	// Load map and objects
 	bool Load();
-
+	
 	void SetupViewport(RenderWindow *pWindow, SceneManager *pCurrent);
-	static void Swap(SceneManager *&first, SceneManager *&second);
 	Vector3 GetCameraPosition();
 	void SetCameraPosition(Vector3 pVec);
 	Vector3 GetCameraDirection();
@@ -238,7 +236,6 @@ public:
 	CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID);
 	void SetGUIMode( GUIMode mode );
 	void SetCombatText ( CEGUI::String pText );
-	void UpdateRageButtons();
 
 	// Mouse events
 	bool mouseMoved(const OIS::MouseEvent &arg);

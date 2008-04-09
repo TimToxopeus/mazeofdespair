@@ -97,15 +97,12 @@ bool CGameEngine::Init()
 
 	// Create scene manager
 	m_pPrimary = m_pRoot->createSceneManager(ST_GENERIC, "ExampleSMInstance");
-	m_pSecondary = m_pRoot->createSceneManager(ST_GENERIC, "secondary");
 
 	// Create camera
 	m_pCamera = m_pPrimary->createCamera(CAMERA_NAME);
     m_pCamera->setPosition(Vector3(0,0,500));
     m_pCamera->lookAt(Vector3(0,0,-300));
     m_pCamera->setNearClipDistance(5);
-
-	m_pCombatCamera = m_pSecondary->createCamera(CAMERA_NAME);
 
 	SetupViewport(m_pWindow, m_pPrimary);
 
@@ -372,7 +369,7 @@ bool CGameEngine::Init()
 	m_pChallengingLevel->setVisible( false );
 	m_pImpossibleLevel->setVisible( false );
 
-	//Load the layouts
+	//Load the layout
 	CEGUI::Window *combatLayout = m_pWindowManager->loadWindowLayout("CombatMode.layout");
 	m_pSheet->addChildWindow(combatLayout);
 	 
@@ -390,17 +387,12 @@ bool CGameEngine::Init()
 	m_pPlayerRageBar = static_cast<CEGUI::ProgressBar*>(m_pWindowManager->getWindow("PlayerRage"));
 	m_pEnemyHealthBar = static_cast<CEGUI::ProgressBar*>(m_pWindowManager->getWindow("EnemyHealth"));
 	
-	//m_pThunderButton->disable();
-	//m_pDoubleButton->disable();
 	m_pCombatWindow->setVisible(false);
-	m_pAttackWindow->setVisible(false);
+	m_pAttackWindow->setVisible(false);	
 	
 	// Set gui system
 	m_pGUISystem->setGUISheet(m_pSheet);	
-	
-	// Testing purpose, Set CITY
-	//SetGUIMode(CITY);
-	
+		
 	return true;
 }
 
@@ -414,13 +406,6 @@ void CGameEngine::SetupViewport(RenderWindow *pWindow, SceneManager *pCurrent)
     vp->setBackgroundColour(ColourValue(0,0,0));
     cam->setAspectRatio(Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
     vp->setOverlaysEnabled(true);
-}
-
-void CGameEngine::Swap(SceneManager *&first, SceneManager *&second)
-{
-    SceneManager *tmp = first;
-    first = second;
-    second = tmp;
 }
 
 void CGameEngine::Run()

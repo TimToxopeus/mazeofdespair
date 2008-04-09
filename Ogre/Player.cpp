@@ -1,3 +1,8 @@
+/************************************************************************************
+*	Assignment 5 - The maze of despair												*
+*	Tim Toxopeus - 3206947															*
+*	Cetin Demir - 3236943															*
+************************************************************************************/
 #include "Player.h"
 
 #include <vector>
@@ -5,12 +10,14 @@ using namespace std;
 
 CPlayer::CPlayer()
 {
+	// Initializes player with default values
 	m_szName = "Player";
 	m_iGold = 150;
 	m_iAttackPower = 10;
 	m_iDefense = 10;
 	m_iCurHP = m_iMaxHP = 20;
 	m_iRage = 0;
+	m_iMaxRage = 20;
 
 	for ( int i = 0; i <10; i++ )
 	{
@@ -19,6 +26,7 @@ CPlayer::CPlayer()
 	}
 }
 
+// Returns AttackPower
 int CPlayer::GetATP()
 {
 	int atp = m_iAttackPower;
@@ -35,6 +43,7 @@ int CPlayer::GetATP()
 	return atp;
 }
 
+// Returns Defense Power
 int CPlayer::GetDef()
 {
 	int def = m_iDefense;
@@ -51,6 +60,7 @@ int CPlayer::GetDef()
 	return def;
 }
 
+// Returns maximim health
 int CPlayer::GetMaxHP()
 {
 	int max = m_iMaxHP;
@@ -67,6 +77,7 @@ int CPlayer::GetMaxHP()
 	return max;
 }
 
+// Adds an Item object to the inventory of the player
 bool CPlayer::AddItemToInventory( CItem *item )
 {
 	for ( int i = 0; i<10; i++ )
@@ -80,6 +91,7 @@ bool CPlayer::AddItemToInventory( CItem *item )
 	return false;
 }
 
+// Equip an item from player's inventory
 bool CPlayer::EquipItemFromInventory( int index )
 {
 	int a = GetRealIndex( index, false );
@@ -95,6 +107,7 @@ bool CPlayer::EquipItemFromInventory( int index )
 	return false;
 }
 
+// Dequip an item from player's inventory
 bool CPlayer::DequipItemFromEquipment( int index )
 {
 	int a = GetRealIndex( index, true );
@@ -113,6 +126,7 @@ bool CPlayer::DequipItemFromEquipment( int index )
 	return false;
 }
 
+// Returns the equipment vector 
 vector<CItem *> CPlayer::GetEquipment()
 {
 	vector<CItem *> equipment;
@@ -124,6 +138,7 @@ vector<CItem *> CPlayer::GetEquipment()
 	return equipment;
 }
 
+// Returns the inventory vector 
 vector<CItem *> CPlayer::GetInventory()
 {
 	vector<CItem *> inventory;
@@ -134,6 +149,7 @@ vector<CItem *> CPlayer::GetInventory()
 
 	return inventory;
 }
+
 
 void CPlayer::SellItemFromEquipment( int index )
 {
@@ -207,23 +223,32 @@ int CPlayer::GetRealIndex( int index, bool equipment )
 	return -1;
 }
 
+// Returns the player's Rage
 int CPlayer::GetRage()
 {
 	return m_iRage;
 }
 
+// Returns the player's Maximum Rage
+int CPlayer::GetMaxRage()
+{
+	return m_iMaxRage;
+}
+
+// Adds the player's Rage
 void CPlayer::AddRage(int pRage)
 {
 	m_iRage += pRage;
 }
 
+// Calculates damage for ThunderStrike and returns damage points
 int CPlayer::ThunderStrike(CCombatant *pVictim)
 {
 	// If the player has enough rage, execute the attack.
-	if ( m_iRage > 4 ) 
+	if ( m_iRage >= 3 ) 
 	{
 		// Only subtract 4, since the player gets 1 Rage point for attacking.
-		m_iRage -= 4;
+		m_iRage -= 2;
 		int diff = m_iAttackPower - pVictim->GetDef();
 		int hit = 35 + diff;
 		int roll = rand()%100 + 1;
@@ -241,13 +266,14 @@ int CPlayer::ThunderStrike(CCombatant *pVictim)
 	return 0;
 }
 
+// Calculates damage for DoubleSlash and returns damage points
 int CPlayer::DoubleSlash(CCombatant *pVictim)
 {
 	// If the player has enough rage, execute the attack.
-	if ( m_iRage > 7 ) 
+	if ( m_iRage >= 6 ) 
 	{
 		// Only subtract 6, since the player gets 2 Rage points for attacking.
-		m_iRage -= 6;
+		m_iRage -= 4;
 		int diff = m_iAttackPower - pVictim->GetDef();
 		int hit = 35 + diff;
 		int roll = rand()%100 + 1;

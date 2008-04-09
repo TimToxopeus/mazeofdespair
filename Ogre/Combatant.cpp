@@ -11,6 +11,7 @@ CCombatant::CCombatant()
 	m_iCurHP = m_iMaxHP = 10;
 }
 
+// Constructor of a CCombatant
 CCombatant::CCombatant(std::string szName, int iGold, int iATP, int iDef, int iHP )
 {
 	m_szName = szName;
@@ -20,6 +21,7 @@ CCombatant::CCombatant(std::string szName, int iGold, int iATP, int iDef, int iH
 	m_iCurHP = m_iMaxHP = iHP;
 }
 
+// Does damage to the victim
 int CCombatant::Attack( CCombatant *pVictim )
 {
 	int diff = m_iAttackPower - pVictim->GetDef();
@@ -38,6 +40,7 @@ int CCombatant::Attack( CCombatant *pVictim )
 	return 0;
 }
 
+// Receives damage
 int CCombatant::TakeDamage( int iDamage )
 {
 	if ( m_iCurHP - iDamage < 0 )
@@ -47,7 +50,7 @@ int CCombatant::TakeDamage( int iDamage )
 	return m_iCurHP;
 }
 
-
+// Constructor of a monster
 CMonster::CMonster(Entity *pEntity, SceneNode *pNode, int iTileX, int iTileY )
 {
 	m_pEntity = pEntity;
@@ -58,11 +61,7 @@ CMonster::CMonster(Entity *pEntity, SceneNode *pNode, int iTileX, int iTileY )
 
 bool CMonster::frameStarted(const FrameEvent &evt)
 {
+	// Rotate the monster
 	m_pNode->yaw( Radian(0.003f) );
 	return true;
-}
-
-void CMonster::BeginAttackMode()
-{
-
 }
