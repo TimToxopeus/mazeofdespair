@@ -184,7 +184,9 @@ public:
 
 	void SetupViewport(RenderWindow *pWindow, SceneManager *pCurrent);
 	static void Swap(SceneManager *&first, SceneManager *&second);
+	Vector3 GetCameraPosition();
 	void SetCameraPosition(Vector3 pVec);
+	Vector3 GetCameraDirection();
 
 	// Function that loads and sets up the tutorial level.
 	bool LoadLevel( const CEGUI::EventArgs &e );

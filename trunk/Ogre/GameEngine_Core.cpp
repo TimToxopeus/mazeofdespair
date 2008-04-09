@@ -373,41 +373,34 @@ bool CGameEngine::Init()
 	m_pImpossibleLevel->setVisible( false );
 
 	//Load the layouts
-		CEGUI::Window *combatLayout = m_pWindowManager->loadWindowLayout("CombatMode.layout");
-		CEGUI::Window *attackLayout = m_pWindowManager->loadWindowLayout("AttackMode.layout");
-		m_pSheet->addChildWindow(combatLayout);
-		m_pSheet->addChildWindow(attackLayout);
-		 
-		//Obtain the handles of the widgets
-		m_pCombatWindow = m_pWindowManager->getWindow("First");
-		m_pCombatMenu = m_pWindowManager->getWindow("Menu");
-		m_pCombatBars = m_pWindowManager->getWindow("Bars");
-		m_pCombatText = m_pWindowManager->getWindow("TextField");
-		CEGUI::Window *attackButton = m_pWindowManager->getWindow("AttackButton");
-		CEGUI::Window *itemButton = m_pWindowManager->getWindow("ItemButton");
-		CEGUI::Window *fleeButton = m_pWindowManager->getWindow("FleeButton");
+	CEGUI::Window *combatLayout = m_pWindowManager->loadWindowLayout("CombatMode.layout");
+	m_pSheet->addChildWindow(combatLayout);
+	 
+	//Obtain the handles of the widgets
+	m_pCombatWindow = m_pWindowManager->getWindow("First");
+	m_pCombatMenu = m_pWindowManager->getWindow("Menu");
+	m_pCombatBars = m_pWindowManager->getWindow("Bars");
+	m_pCombatText = m_pWindowManager->getWindow("TextField");
 
-		m_pAttackWindow = m_pWindowManager->getWindow("AttackRoot");
-		CEGUI::Window *hitButton = m_pWindowManager->getWindow("AttackButton1");
-		m_pThunderButton = m_pWindowManager->getWindow("AttackButton2");
-		m_pDoubleButton = m_pWindowManager->getWindow("AttackButton3");
-		CEGUI::Window *backButton = m_pWindowManager->getWindow("AttackButton4");
-
-		m_pPlayerHealthBar = static_cast<CEGUI::ProgressBar*>(m_pWindowManager->getWindow("PlayerHealth"));
-		m_pPlayerRageBar = static_cast<CEGUI::ProgressBar*>(m_pWindowManager->getWindow("PlayerRage"));
-		m_pEnemyHealthBar = static_cast<CEGUI::ProgressBar*>(m_pWindowManager->getWindow("EnemyHealth"));
-
-		//m_pThunderButton->disable();
-		//m_pDoubleButton->disable();
+	m_pAttackWindow = m_pWindowManager->getWindow("AttackMenu");
+	m_pThunderButton = m_pWindowManager->getWindow("AttackButton2");
+	m_pDoubleButton = m_pWindowManager->getWindow("AttackButton3");
+	
+	m_pPlayerHealthBar = static_cast<CEGUI::ProgressBar*>(m_pWindowManager->getWindow("PlayerHealth"));
+	m_pPlayerRageBar = static_cast<CEGUI::ProgressBar*>(m_pWindowManager->getWindow("PlayerRage"));
+	m_pEnemyHealthBar = static_cast<CEGUI::ProgressBar*>(m_pWindowManager->getWindow("EnemyHealth"));
+	
+	//m_pThunderButton->disable();
+	//m_pDoubleButton->disable();
 	m_pCombatWindow->setVisible(false);
 	m_pAttackWindow->setVisible(false);
-
+	
 	// Set gui system
 	m_pGUISystem->setGUISheet(m_pSheet);	
 	
 	// Testing purpose, Set CITY
 	//SetGUIMode(CITY);
-
+	
 	return true;
 }
 

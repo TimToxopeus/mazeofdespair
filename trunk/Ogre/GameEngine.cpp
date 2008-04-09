@@ -76,16 +76,8 @@ void CGameEngine::Clean()
 	}
 	m_pMonsters.clear();
 
-	for ( int a = 0; a<m_pHiddenCubes.size(); a++ )
-	{
-		delete m_pHiddenCubes[a];
-	}
 	m_pHiddenCubes.clear();
 
-	for ( int a = 0; a<m_pDiscoveredCubes.size(); a++ )
-	{
-		delete m_pDiscoveredCubes[a];
-	}
 	m_pDiscoveredCubes.clear();
 
 	if ( pCombatMode )
@@ -93,6 +85,27 @@ void CGameEngine::Clean()
 		delete pCombatMode;
 		pCombatMode = NULL;
 	}
+
+	m_pWindowManager->destroyWindow(m_pMapPlayer);
+	m_pWindowManager->destroyWindow(m_pMap);
+	CEGUI::Texture *cTex = m_pGUIRenderer->createTexture("map2.jpg");
+	CEGUI::Imageset *imageSet = CEGUI::ImagesetManager::getSingleton().getImageset("MapSet");
+
+	m_pMap = m_pWindowManager->createWindow("TaharezLook/StaticImage", "Root/Map");
+	m_pMap->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.8, 0)) );
+	m_pMap->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.1,0)) );
+	m_pMap->setProperty("Image", CEGUI::PropertyHelper::imageToString(&imageSet->getImage((CEGUI::utf8*)"map2.jpg")));
+	m_pSheet->addChildWindow(m_pMap);
+	m_pMap->setVisible( false );
+
+	cTex = m_pGUIRenderer->createTexture("player.jpg");
+	imageSet = CEGUI::ImagesetManager::getSingleton().getImageset("PlayerSet");
+
+	m_pMapPlayer = m_pWindowManager->createWindow("TaharezLook/StaticImage", "Root/Map/Player");
+	m_pMapPlayer->setSize( CEGUI::UVector2(CEGUI::UDim(0.9, 0), CEGUI::UDim(0.8, 0)) );
+	m_pMapPlayer->setPosition( CEGUI::UVector2(CEGUI::UDim(0.05,0), CEGUI::UDim(0.1,0)) );
+	m_pMapPlayer->setProperty("Image", CEGUI::PropertyHelper::imageToString(&imageSet->getImage((CEGUI::utf8*)"player.jpg")));
+	m_pMap->addChildWindow(m_pMapPlayer);
 
 	m_pPrimary->clearScene();
 }
@@ -373,8 +386,7 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 
 	if( m_pKeyboard->isKeyDown(KC_V) && m_fTimeUntilNextToggle <= 0 )
 	{	
-		Vector3 vec = (m_pPrimary->getEntity("CeilingEntity")->getParentSceneNode()->getPosition() * 5);
-		Ogre::LogManager::getSingleton().logMessage("Vector!: " + itoa2(vec.x) + "," + itoa2(vec.y) + "," + itoa2(vec.z));
+		Ogre::LogManager::getSingleton().logMessage("Vector!: " + itoa2(m_vCameraPos.x) + "," + itoa2(m_vCameraPos.y) + "," + itoa2(m_vCameraPos.z));
 		/*if ( !m_pCombatWindow->isVisible() )
 		{
 			m_bInCombatMode = true;
@@ -464,42 +476,47 @@ void CGameEngine::moveCamera()
 	Vector3 pos = m_pCamera->getPosition();
 	Vector3 move = m_vTranslateVector;
 	move.normalise();
-	m_pCamera->moveRelative(move * 10);
-	
-	// If the player has selected the key
-	if ( m_bKeySelected && m_pKeys.size() > 0 )
+	int dist = 10;
+	while ( dist > 0 )
 	{
-		// Get the key-scenenode
-		SceneNode * scen = m_pKeys[0]->getSceneNode();
-		// Set the key in front of the camera.
-		scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
+		m_pCamera->moveRelative(move * dist);
 		
-		// If the camera collides or the key collides, respond.
-		if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) || m_pMapLoader->hasCube(scen->getPosition(),true) )
+		// If the player has selected the key
+		if ( m_bKeySelected && m_pKeys.size() > 0 )
 		{
-			// Set camera position and don't translate
-			m_pCamera->setPosition(pos);
+			// Get the key-scenenode
+			SceneNode * scen = m_pKeys[0]->getSceneNode();
 			// Set the key in front of the camera.
 			scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
+			
+			// If the camera collides or the key collides, respond.
+			if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) || m_pMapLoader->hasCube(scen->getPosition(),true) )
+			{
+				// Set camera position and don't translate
+				m_pCamera->setPosition(pos);
+				// Set the key in front of the camera.
+				scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
+			}
+			else // otherwise translate camera and set the key in front of the camera.
+			{
+				m_pCamera->setPosition(pos);
+				m_pCamera->moveRelative(m_vTranslateVector);
+				scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
+			}
 		}
-		else // otherwise translate camera and set the key in front of the camera.
+		else // If the key is not selected, only calculate camera.
 		{
-			m_pCamera->setPosition(pos);
-			m_pCamera->moveRelative(m_vTranslateVector);
-			scen->setPosition( m_pCamera->getPosition() + m_pCamera->getDirection() * 50 );
+			if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) )
+			{
+				m_pCamera->setPosition(pos);
+			}
+			else
+			{
+				m_pCamera->setPosition(pos);
+				m_pCamera->moveRelative(m_vTranslateVector);
+			}
 		}
-	}
-	else // If the key is not selected, only calculate camera.
-	{
-		if ( m_pMapLoader->hasCube(m_pCamera->getPosition()) )
-		{
-			m_pCamera->setPosition(pos);
-		}
-		else
-		{
-			m_pCamera->setPosition(pos);
-			m_pCamera->moveRelative(m_vTranslateVector);
-		}
+		dist--;
 	}
 
 	// Check if we are on top of an item and if we can pick it up
@@ -546,9 +563,9 @@ void CGameEngine::moveCamera()
 		CMonster *pMonster = m_pMonsters[i];
 		if ( ((pMonster->getTileX() * 3) + 1) == clippedX && ((pMonster->getTileY() * 3) + 1) == clippedY )
 		{
-			CCombatant *pActualMonster = m_pFactory->GetRandomMonster(m_iLevel);
-			m_pCombatText->setText( "Starting battle with " + pActualMonster->GetName() );
+			CCombatant *pActualMonster = m_pFactory->GetRandomMonster(m_iLevel);			
 			// Start combat!
+			m_vCameraPos = m_pCamera->getPosition();
 			m_bInCombatMode = true;
 			if ( pCombatMode )
 			{
@@ -562,7 +579,7 @@ void CGameEngine::moveCamera()
 			CEGUI::Window *itemButton = m_pWindowManager->getWindow("ItemButton");
 			CEGUI::Window *fleeButton = m_pWindowManager->getWindow("FleeButton");
 
-			m_pAttackWindow = m_pWindowManager->getWindow("AttackRoot");
+			m_pAttackWindow = m_pWindowManager->getWindow("AttackMenu");
 			CEGUI::Window *hitButton = m_pWindowManager->getWindow("AttackButton1");
 			m_pThunderButton = m_pWindowManager->getWindow("AttackButton2");
 			m_pDoubleButton = m_pWindowManager->getWindow("AttackButton3");
@@ -576,7 +593,6 @@ void CGameEngine::moveCamera()
 			m_pDoubleButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Double, pCombatMode));
 			backButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Back, pCombatMode));
 
-			m_vCameraPos = m_pCamera->getPosition();
 		}
 	}
 
@@ -915,6 +931,7 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 	{
 		NextLevel(e);
 		m_pHiddenCubes = m_pMapLoader->GetCubes();
+		m_pDiscoveredCubes.clear();
 
 		m_iOldClippedX = m_iOldClippedY = -1;
 
@@ -1280,6 +1297,7 @@ void CGameEngine::SetGUIMode( GUIMode mode )
 		m_pCombatText->setVisible(true);
 		break;
 	case BATTLEMODEATTACK:
+		m_pCombatWindow->setVisible(true);
 		m_pAttackWindow->setVisible(true);
 		m_pCombatText->setVisible(true);
 		m_pCombatBars->setVisible(true);
@@ -1316,7 +1334,7 @@ void CGameEngine::UpdateRageButtons()
 }
 
 void CGameEngine::ContinueGame(CCombatant *pActualMonster, CMonster *pMonster)
-{
+{	
 	m_bInCombatMode = false;
 	m_pCamera->setPosition(m_vCameraPos);
 	m_pCombatLight->setVisible(false);
@@ -1326,8 +1344,32 @@ void CGameEngine::ContinueGame(CCombatant *pActualMonster, CMonster *pMonster)
 	delete pActualMonster;
 	m_pPrimary->destroyEntity( pMonster->getEntity() );
 	m_pPrimary->getRootSceneNode()->removeChild(pMonster->getNode());
-	delete pMonster;
-	//m_pMonsters.at(.erase( m_pMonsters.begin() + i );
+	delete pMonster;	
+
+	if (m_pPlayer->GetCurHP() <= 0 )
+	{
+		Clean();
+		SetGUIMode( MAINMENU );
+
+		m_pMessageBox->setVisible( true );
+		m_pMessageBoxText->setText("You have died! Game over!");
+		m_fMessageTime = 5;
+	}
+	else
+	{
+		m_pMessageBox->setVisible( true );
+		m_pMessageBoxText->setText("You have slain the monster!");
+		m_fMessageTime = 5;
+	}
 }
 
+Vector3 CGameEngine::GetCameraPosition()
+{
+	return m_pCamera->getPosition();
+}
+
+Vector3 CGameEngine::GetCameraDirection()
+{
+	return m_pCamera->getDirection();
+}
 
