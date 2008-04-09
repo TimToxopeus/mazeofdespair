@@ -21,7 +21,6 @@ public:
 	void CanContinue();
 	
 	bool Attack( const CEGUI::EventArgs &e );
-	bool Item( const CEGUI::EventArgs &e );
 	bool Flee( const CEGUI::EventArgs &e );
 	bool Hit( const CEGUI::EventArgs &e );
 	bool Thunder( const CEGUI::EventArgs &e );
