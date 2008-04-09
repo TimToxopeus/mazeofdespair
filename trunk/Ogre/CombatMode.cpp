@@ -1,4 +1,8 @@
-//#include "CombatMode.h"
+/************************************************************************************
+*	Assignment 5 - The maze of despair												*
+*	Tim Toxopeus - 3206947															*
+*	Cetin Demir - 3236943															*
+************************************************************************************/
 #include "GameEngine.h"
 
 extern std::string itoa2( const int x );
@@ -116,7 +120,7 @@ bool CombatMode::Thunder( const CEGUI::EventArgs &e )
 	}
 	else 
 	{
-		AddStringToCombatLog( "You don't have enough Rage, need at least 3 for ThunderStrike!" );
+		AddStringToCombatLog( "You don't have enough Rage!\n    Need at least 3 for ThunderStrike!" );
 	}
 
 	return true;
@@ -141,7 +145,7 @@ bool CombatMode::Double( const CEGUI::EventArgs &e )
 	}
 	else 
 	{
-		AddStringToCombatLog( "You don't have enough Rage, need at least 6 for Double Slash!" );
+		AddStringToCombatLog( "You don't have enough Rage!\n    Need at least 6 for Double Slash!" );
 	}
 
 	return true;
