@@ -24,6 +24,7 @@ bool CGameEngine::Load()
 	m_pPrimary->setAmbientLight(ColourValue(0, 0, 0));
 	m_pPrimary->setShadowTechnique(SHADOWTYPE_STENCIL_ADDITIVE);
 
+	// Create flashlight 2
 	m_pFlashlight = m_pPrimary->createLight("Flashlight");
 	m_pFlashlight->setType(Light::LT_SPOTLIGHT);
 	m_pFlashlight->setDiffuseColour(1.0, 1.0, 1.0);
@@ -33,6 +34,7 @@ bool CGameEngine::Load()
 	m_pFlashlight->setPosition(m_pCamera->getPosition() - (m_pCamera->getDirection() * 50));
 	m_pFlashlight->setDirection(m_pCamera->getDirection());
 
+	// Create flashlight 2
 	m_pFlashlight2 = m_pPrimary->createLight("Flashlight2");
 	m_pFlashlight2->setType(Light::LT_POINT);
 	m_pFlashlight2->setDiffuseColour(1.0, 1.0, 1.0);
@@ -133,14 +135,13 @@ bool CGameEngine::frameStarted(const FrameEvent& evt)
 	if ( m_bInCombatMode )
 	{
 		// Update bars
-		CEGUI::ProgressBar *m_pPlayerHealth = (CEGUI::ProgressBar *)m_pWindowManager->getWindow("PlayerHealth");
-		CEGUI::ProgressBar *m_pMonsterHealth = (CEGUI::ProgressBar *)m_pWindowManager->getWindow("EnemyHealth");
-
+	
 		CCombatant *pCombatant = pCombatMode->GetCombatant();
 		if ( pCombatant )
 		{
-			m_pPlayerHealth->setProgress( (float)m_pPlayer->GetCurHP() / (float)m_pPlayer->GetMaxHP() );
-			m_pMonsterHealth->setProgress( (float)pCombatant->GetCurHP() / (float)pCombatant->GetMaxHP() );
+			m_pPlayerHealthBar->setProgress( (float)m_pPlayer->GetCurHP() / (float)m_pPlayer->GetMaxHP() );
+			m_pPlayerRageBar->setProgress( (float)m_pPlayer->GetRage() / (float)m_pPlayer->GetMaxRage() ) ;
+			m_pEnemyHealthBar->setProgress( (float)pCombatant->GetCurHP() / (float)pCombatant->GetMaxHP() );
 		}
 	}
 	else if ( pCombatMode )
@@ -246,8 +247,6 @@ bool CGameEngine::frameStarted(const FrameEvent& evt)
 		{
 			m_bKeySelected = false;
 			door->Unlock();
-//			m_pKeys[0]->getSceneNode()->detachAllObjects();									// Detach all object of the node.
-//			m_pPrimary->getRootSceneNode()->removeAndDestroyChild( "Switch_Node" );	// Remove and destroy the node from the root.
 			m_pPrimary->destroyEntity( "Key" );
 			m_pPrimary->getRootSceneNode()->removeAndDestroyChild( "Key_Node" );
 			delete m_pKeys[0];																// Remove from vector.
@@ -398,28 +397,6 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 		m_bMapVisible = !m_bMapVisible;
 		m_pMap->setVisible(m_bMapVisible);
 		m_fTimeUntilNextToggle = 0.3;
-	}
-
-	if( m_pKeyboard->isKeyDown(KC_V) && m_fTimeUntilNextToggle <= 0 )
-	{	
-		Ogre::LogManager::getSingleton().logMessage("Vector!: " + itoa2(m_vCameraPos.x) + "," + itoa2(m_vCameraPos.y) + "," + itoa2(m_vCameraPos.z));
-		/*if ( !m_pCombatWindow->isVisible() )
-		{
-			m_bInCombatMode = true;
-			m_pCombatWindow->setVisible(true);
-			m_pCombatMenu->setVisible(true);
-			m_pCombatText->setVisible(true);
-			m_pCamera->setPosition(m_pPrimary->getEntity("CeilingEntity")->getParentSceneNode()->getPosition() * 5);
-		}
-		else
-		{
-			m_bInCombatMode = false;
-			m_pCamera->setPosition(m_vCameraPos);
-			m_pCombatWindow->setVisible(false);
-			m_pCombatMenu->setVisible(false);
-			m_pCombatText->setVisible(false);
-		}*/
-		m_fTimeUntilNextToggle = 0.5;
 	}
 
 	if( m_pKeyboard->isKeyDown(KC_T) && m_fTimeUntilNextToggle <= 0 )
@@ -595,8 +572,11 @@ void CGameEngine::moveCamera()
 					pCombatMode = NULL;
 				}
 				m_pMonsters.erase( m_pMonsters.begin() + i );
+				
+				// Start Combat!
 				pCombatMode = new CombatMode(m_pPlayer, pActualMonster, pMonster);	
 
+				// CEGUI Windows
 				CEGUI::Window *attackButton = m_pWindowManager->getWindow("AttackButton");
 				CEGUI::Window *fleeButton = m_pWindowManager->getWindow("FleeButton");
 
@@ -613,6 +593,7 @@ void CGameEngine::moveCamera()
 				m_pDoubleButton->removeAllEvents();
 				backButton->removeAllEvents();
 
+				// Subscribe events to buttons
 				attackButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Attack, pCombatMode));
 				fleeButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Flee, pCombatMode));
 				hitButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Hit, pCombatMode));
@@ -689,6 +670,7 @@ void CGameEngine::moveCamera()
 			m_bDisplayedSwitchTip = true;
 		}
 	}
+	m_vCameraPos = m_pCamera->getPosition();
 }
 
 void CGameEngine::toggleLights()
@@ -901,33 +883,40 @@ void CGameEngine::onRightPressed(const OIS::MouseEvent &arg)
 	}
 }
 
+// Set's camera position
 void CGameEngine::SetCameraPosition(Vector3 pVec)
 {
 	m_pCamera->setPosition(pVec);
-	//m_pCamera->yaw(Degree());
 }
 
-
+// Loads tutorial level
 bool CGameEngine::LoadLevel( const CEGUI::EventArgs &e )
 {
+	// Clean & load for new level.
 	Clean();
 	Load();
 
 	m_iTorchCount = 0;
 
+	// Disable GUI
 	SetGUIMode( NONE );
+	// Set mouse visible
 	CEGUI::MouseCursor::getSingleton().setVisible(true);
 
+	// Load map!
 	keylights = m_pMapLoader->LoadMap( "map.txt", m_pPrimary, m_pCamera );
 
+	// Set flashlight on, and set the right direction
 	m_pFlashlight->setPosition(m_pCamera->getPosition() - (m_pCamera->getDirection() * 50));
 	m_pFlashlight->setDirection(m_pCamera->getDirection());
 	m_pFlashlight2->setPosition(m_pCamera->getPosition());
 
+	// Set the right booleans for game logic.
 	m_bLoaded = true;
 	m_bInAdventureMode = false;
 	m_bDisplayedSwitchTip = false;
 
+	// Show messagebox with tutorial message.
 	m_pMessageBox->setVisible( true );
 	m_pMessageBoxText->setText("You can rotate the camera by holding down the right mouse button!");
 	m_fMessageTime = 5;
@@ -935,6 +924,7 @@ bool CGameEngine::LoadLevel( const CEGUI::EventArgs &e )
 	return true;
 }
 
+// Load Adventure mode.
 bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 {		
 	m_iLevel = 0;
@@ -944,6 +934,7 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
 	CEGUI::String senderID = we.window->getName();
 
+	// Set the right Adventure Mode
 	Ogre::LogManager::getSingleton().logMessage("Adventure mode started by: " + string(senderID.c_str()) );
 	if ( senderID.find("Easy") != CEGUI::String::npos )
 		m_iLevel = 1;
@@ -958,18 +949,24 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 
 	if ( m_iLevel != 0 )
 	{
+		// reset player's health
 		m_pPlayer->RecoverHP();
 
+		// Load level
 		NextLevel(e);
+		
 		m_pHiddenCubes = m_pMapLoader->GetCubes();
 		m_pDiscoveredCubes.clear();
 
 		m_iOldClippedX = m_iOldClippedY = -1;
-
+		
+		// Set the right booleans for game logic.
 		m_bInAdventureMode = true;
 		m_bDisplayedSwitchTip = false;
+		// Set the right GUI.
 		SetGUIMode( ADVENTURE );	
 	
+		// Show message
 		m_pMessageBox->setVisible( true );
 		m_pMessageBoxText->setText("In adventure mode you have to defeat the ninja before going insane.\nWhen you run out of torches you will slowly lose your mind in the dark!");
 		m_fMessageTime = 10;
@@ -987,11 +984,11 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
     m_pCombatLight->setSpecularColour(1.0, 0.0, 0.0);
 	m_pCombatLight->setPosition(8755, 0, 8755);
 	m_pCombatLight->setVisible(true);
-
 	
 	return true;
 }
 
+// Handle Quit button event.
 bool CGameEngine::Quit( const CEGUI::EventArgs &e )
 {
 	m_bQuit = true;
@@ -1011,8 +1008,9 @@ bool CGameEngine::NextLevel( const CEGUI::EventArgs &e )
 	SetGUIMode( ADVENTURE );
 	CEGUI::MouseCursor::getSingleton().setVisible(true);
 
+	// Load the level
 	keylights = m_pMapLoader->LoadMap( itoa2(m_iLevel + 5), m_pPrimary, m_pCamera, true );
-
+	// Set flashlight on, and set the right direction
 	m_pFlashlight->setPosition(m_pCamera->getPosition() - (m_pCamera->getDirection() * 50));
 	m_pFlashlight->setDirection(m_pCamera->getDirection());
 	m_pFlashlight2->setPosition(m_pCamera->getPosition());
@@ -1026,9 +1024,12 @@ bool CGameEngine::NextLevel( const CEGUI::EventArgs &e )
 	return true;
 }
 
+// Show City Menu.
+// Shows Player's inventory, inventory, a shop to buy items and player's stats.
 void CGameEngine::ShowCity(bool refreshShop)
-{
+{	
 	CEGUI::WindowManager *win = CEGUI::WindowManager::getSingletonPtr();
+	
 	vector<CItem *> equipment = m_pPlayer->GetEquipment();
 	vector<CItem *> inventory = m_pPlayer->GetInventory();
 	m_pCharacterWindow->setText("Hitpoints: " + itoa2(m_pPlayer->GetMaxHP()) + 
@@ -1036,6 +1037,7 @@ void CGameEngine::ShowCity(bool refreshShop)
 								"\nDefensive power: " + itoa2(m_pPlayer->GetDef()) + 
 								"\nGold: " + itoa2(m_pPlayer->GetGold()) + " goldpieces");
 
+	// Set the right GUI mode.
 	SetGUIMode( CITY );
 
 	m_iSelectedType = m_iSelectedIndex = 0;
@@ -1146,6 +1148,7 @@ bool CGameEngine::ClickItem( const CEGUI::EventArgs &e )
 	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
 	CEGUI::String senderID = we.window->getName();
 
+	// Find the right sender
 	int type = 0;
 	if ( senderID.find("Equipment") != CEGUI::String::npos )
 		type = 1;
@@ -1181,7 +1184,7 @@ bool CGameEngine::ClickItem( const CEGUI::EventArgs &e )
 
 		CItem *pItem = NULL;
 		vector<CItem *> container;
-
+		
 		switch ( m_iSelectedType )
 		{
 		case 1:
@@ -1283,8 +1286,10 @@ bool CGameEngine::EquipDequipItem( const CEGUI::EventArgs &e )
 	return true;
 }
 
+// Function that handles GUI Modes
 void CGameEngine::SetGUIMode( GUIMode mode )
 {
+	// Set all windows to invisible
 	m_pCity->setVisible( false );
 	m_pEasyLevel->setVisible( false );
 	m_pMediumLevel->setVisible( false );
@@ -1303,7 +1308,8 @@ void CGameEngine::SetGUIMode( GUIMode mode )
 	m_pCombatText->setVisible(false);
 	m_pAttackWindow->setVisible(false);
 	m_pCombatBars->setVisible(false);
-
+	
+	// Check mode and set the right windows to visible
 	switch (mode)
 	{
 	case MAINMENU:
@@ -1339,31 +1345,13 @@ void CGameEngine::SetGUIMode( GUIMode mode )
 	}
 }
 
+// Set the combat log
 void CGameEngine::SetCombatText ( CEGUI::String pText )
 {
 	m_pCombatText->setText( pText );
 }
 
-void CGameEngine::UpdateRageButtons()
-{
-	if ( m_pPlayer->GetRage() > 4 )
-	{
-		m_pThunderButton->enable();
-	}
-	else 
-	{
-		m_pThunderButton->disable();
-	}
-	if ( m_pPlayer->GetRage() > 7 )
-	{
-		m_pDoubleButton->enable();
-	}
-	else 
-	{
-		m_pDoubleButton->disable();
-	}
-}
-
+// When the player ends combat, this function gets called to continue the game where the player left off.
 void CGameEngine::ContinueGame(CCombatant *pActualMonster, CMonster *pMonster)
 {
 	if ( pActualMonster == NULL )
@@ -1378,24 +1366,29 @@ void CGameEngine::ContinueGame(CCombatant *pActualMonster, CMonster *pMonster)
 	}
 
 	m_bInCombatMode = false;
+	// Set the camera back to where the player left.
 	m_pCamera->setPosition(m_vCameraPos);
 	m_pCombatLight->setVisible(false);
+	// Put back Adventure GUI
 	SetGUIMode ( ADVENTURE );
 
 	// Remove monster entity from scene.
 	m_pPrimary->destroyEntity( pMonster->getEntity() );
 	m_pPrimary->getRootSceneNode()->removeChild(pMonster->getNode());
 
-
+	// If the player's Health is 0 or less, clean up and give an appropriate message.
 	if (m_pPlayer->GetCurHP() <= 0 )
 	{
 		Clean();
+		// Go to the MAIN MENU
 		SetGUIMode( MAINMENU );
 
+		// Give message.
 		m_pMessageBox->setVisible( true );
 		m_pMessageBoxText->setText("You have died! Game over!");
 		m_fMessageTime = 5;
 	}
+	// If the enemy's health is 0 or less, clean up and give an appropriate message.
 	else if ( pActualMonster->GetCurHP() <= 0 )
 	{
 		string result = "You have slain the monster!\nYour reward is: ";
@@ -1425,11 +1418,13 @@ void CGameEngine::ContinueGame(CCombatant *pActualMonster, CMonster *pMonster)
 	}
 }
 
+// Returns camera position.
 Vector3 CGameEngine::GetCameraPosition()
 {
 	return m_pCamera->getPosition();
 }
 
+// Returns camera direction.
 Vector3 CGameEngine::GetCameraDirection()
 {
 	return m_pCamera->getDirection();

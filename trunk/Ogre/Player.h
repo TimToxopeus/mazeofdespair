@@ -15,27 +15,29 @@ protected:
 	CItem *m_Inventory[10];
 	int GetRealIndex( int index, bool equipment );
 	int m_iRage;
+	int m_iMaxRage; 
 
 public:
 	CPlayer();
-
+	
 	virtual int GetATP();
 	virtual int GetDef();
 	virtual int GetMaxHP();
 	
 	int GetRage();
+	int GetMaxRage();
 	void AddRage(int pRage);
-
+	
 	bool AddItemToInventory( CItem *item );
 	void DeductCash( int amount ) { m_iGold -= amount; }
 	bool EquipItemFromInventory( int index );
 	bool DequipItemFromEquipment( int index );
 	std::vector<CItem *> GetEquipment();
 	std::vector<CItem *> GetInventory();
-
+	
 	void SellItemFromEquipment( int index );
 	void SellItemFromInventory( int index );
-
+	
 	int ThunderStrike(CCombatant *pCCombatant);
 	int DoubleSlash(CCombatant *pCCombatant);
 

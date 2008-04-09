@@ -11,7 +11,7 @@ using namespace Ogre;
 class CDoor
 {
 private:
-	Entity *m_pEntity;
+	Entity *m_pEntity;		
 	SceneNode *m_pNode;
 
 	bool m_bUnlocked;

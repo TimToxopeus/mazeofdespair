@@ -1,3 +1,8 @@
+/************************************************************************************
+*	Assignment 5 - The maze of despair												*
+*	Tim Toxopeus - 3206947															*
+*	Cetin Demir - 3236943															*
+************************************************************************************/
 #include "RandomizedFactory.h"
 
 #include <string>
@@ -15,6 +20,7 @@ CRandomizedFactory::~CRandomizedFactory()
 	m_pNameGenerator = NULL;
 }
 
+// Get random name
 string CRandomizedFactory::GetRandomItemName( int iSlot )
 {
 	string adjectives[] = { "Benevolence", "Impurity", "Evil", "Light", "Darkness", "Hope", "Energy", "the Bear", "Mobility", "Justice",
@@ -27,6 +33,7 @@ string CRandomizedFactory::GetRandomItemName( int iSlot )
 	return name;
 }
 
+// Get random monster name
 string CRandomizedFactory::GetRandomMonsterName()
 {
 	char cName[12];
@@ -42,6 +49,7 @@ string CRandomizedFactory::GetRandomMonsterName()
 	return name;
 }
 
+// Get a random Item
 CItem *CRandomizedFactory::GetRandomItem( int iSlot, int iLevel )
 {
 	if ( iLevel < 1 ) iLevel = 1;
@@ -55,6 +63,7 @@ CItem *CRandomizedFactory::GetRandomItem( int iSlot, int iLevel )
 	return pItem;
 }
 
+// Get a random CCombatant object
 CCombatant *CRandomizedFactory::GetRandomMonster( int iLevel )
 {
 	string name = GetRandomMonsterName();
