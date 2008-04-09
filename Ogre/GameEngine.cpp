@@ -6,9 +6,9 @@
 /****************************************************************
 * GameEngine.cpp												*
 *																*
-* The core of the engine. All calculations are made here.		*
-* Think of camera movement, collision detection/response,		*
-* clicking on objects and unlocking doors with keys, etcetera.	*		
+* The gameplay logic part. All calculations are made here.		*
+* Camera movement, collision detection/response, input, GUI		*
+* clicking on objects and unlocking doors with keys.			*		
 ****************************************************************/
 #include "GameEngine.h"
 #include "MapLoader.h"
@@ -670,7 +670,7 @@ void CGameEngine::moveCamera()
 			m_bDisplayedSwitchTip = true;
 		}
 	}
-	m_vCameraPos = m_pCamera->getPosition();
+	//m_vCameraPos = m_pCamera->getPosition();
 }
 
 void CGameEngine::toggleLights()

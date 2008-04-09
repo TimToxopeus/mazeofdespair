@@ -1,8 +1,13 @@
+/************************************************************************************
+*	Assignment 5 - The maze of despair												*
+*	Tim Toxopeus - 3206947															*
+*	Cetin Demir - 3236943															*
+************************************************************************************/
 /****************************************************************
 * GameEngine_Core.cpp											*
 *																*
 * Contains all the core code to keep the specific code cleanly  *
-* seperate from the core in GameEngine.cpp						*
+* seperate from the gameplay logic in GameEngine.cpp			*
 ****************************************************************/
 #include "GameEngine.h"
 
