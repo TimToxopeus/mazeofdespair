@@ -12,6 +12,7 @@ private:
 	CCombatant * m_pCombatant;
 	CMonster *m_pMonster;
 	bool m_bPlayersTurn;
+	std::vector<std::string> m_sCombatText;
 
 public:
 	CombatMode(CPlayer *m_pPlayer, CCombatant *pActualMonster, CMonster *pMonster);
@@ -26,5 +27,8 @@ public:
 	bool Thunder( const CEGUI::EventArgs &e );
 	bool Double( const CEGUI::EventArgs &e );
 	bool Back( const CEGUI::EventArgs &e );
+
+	void PrintCombatLog();
+	void AddStringToCombatLog(std::string pstring);
 
 };
