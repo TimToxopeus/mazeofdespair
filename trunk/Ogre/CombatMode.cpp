@@ -49,12 +49,6 @@ bool CombatMode::Attack( const CEGUI::EventArgs &e )
 	return true;
 }
 
-bool CombatMode::Item( const CEGUI::EventArgs &e )
-{	
-	//CGameEngine::Instance()->SetCombatText( "Item!" );
-	return true;
-}
-
 bool CombatMode::Flee( const CEGUI::EventArgs &e )
 {
 	//// Calculate flee chance.

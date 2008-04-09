@@ -26,13 +26,7 @@
                 <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
                 <Property Name="UnifiedAreaRect" Value="{{0.587685,0},{0.616989,0},{0.977092,0},{0.951932,0}}" />
             </Window>
-            <Window Type="TaharezLook/Button" Name="ItemButton" >
-                <Property Name="Font" Value="Iconified-12" />
-                <Property Name="Text" Value="Item" />
-                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                <Property Name="UnifiedAreaRect" Value="{{0.5867,0},{0.238224,0},{0.976602,0},{0.561583,0}}" />
-            </Window>
-        </Window>
+         </Window>
 		<Window Type="TaharezLook/FrameWindow" Name="AttackMenu" >
             <Property Name="FrameEnabled" Value="False" />
             <Property Name="TitlebarFont" Value="Commonwealth-10" />

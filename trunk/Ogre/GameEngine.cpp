@@ -576,7 +576,6 @@ void CGameEngine::moveCamera()
 			m_pMonsters.erase( m_pMonsters.begin() + i );
 
 			CEGUI::Window *attackButton = m_pWindowManager->getWindow("AttackButton");
-			CEGUI::Window *itemButton = m_pWindowManager->getWindow("ItemButton");
 			CEGUI::Window *fleeButton = m_pWindowManager->getWindow("FleeButton");
 
 			m_pAttackWindow = m_pWindowManager->getWindow("AttackMenu");
@@ -585,7 +584,6 @@ void CGameEngine::moveCamera()
 			m_pDoubleButton = m_pWindowManager->getWindow("AttackButton3");
 			CEGUI::Window *backButton = m_pWindowManager->getWindow("AttackButton4");
 			attackButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Attack, pCombatMode));
-			itemButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Item, pCombatMode));
 			fleeButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Flee, pCombatMode));
 
 			hitButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Hit, pCombatMode));
