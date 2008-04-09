@@ -30,4 +30,5 @@ public:
 	void PrintCombatLog();
 	void AddStringToCombatLog(std::string pstring);
 
+	CCombatant *GetCombatant() { return m_pCombatant; }
 };

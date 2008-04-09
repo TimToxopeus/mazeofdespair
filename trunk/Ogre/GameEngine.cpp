@@ -80,12 +80,6 @@ void CGameEngine::Clean()
 
 	m_pDiscoveredCubes.clear();
 
-	if ( pCombatMode )
-	{
-		delete pCombatMode;
-		pCombatMode = NULL;
-	}
-
 	m_pWindowManager->destroyWindow(m_pMapPlayer);
 	m_pWindowManager->destroyWindow(m_pMap);
 	CEGUI::Texture *cTex = m_pGUIRenderer->createTexture("map2.jpg");
@@ -134,6 +128,25 @@ bool CGameEngine::frameStarted(const FrameEvent& evt)
 			m_pInsanityBar->setVisible( false );
 			m_pMainmenu->setVisible( true );
 		}
+	}
+
+	if ( m_bInCombatMode )
+	{
+		// Update bars
+		CEGUI::ProgressBar *m_pPlayerHealth = (CEGUI::ProgressBar *)m_pWindowManager->getWindow("PlayerHealth");
+		CEGUI::ProgressBar *m_pMonsterHealth = (CEGUI::ProgressBar *)m_pWindowManager->getWindow("EnemyHealth");
+
+		CCombatant *pCombatant = pCombatMode->GetCombatant();
+		if ( pCombatant )
+		{
+			m_pPlayerHealth->setProgress( (float)m_pPlayer->GetCurHP() / (float)m_pPlayer->GetMaxHP() );
+			m_pMonsterHealth->setProgress( (float)pCombatant->GetCurHP() / (float)pCombatant->GetMaxHP() );
+		}
+	}
+	else if ( pCombatMode )
+	{
+		delete pCombatMode;
+		pCombatMode = NULL;
 	}
 
 	if(m_pWindow->isClosed())	return false;
@@ -246,6 +259,9 @@ bool CGameEngine::frameStarted(const FrameEvent& evt)
 				m_pMessageBoxText->setText("You have defeated the ninja guard! Onwards to the next dungeon!\nPress ENTER to continue!");
 				m_fMessageTime = 5;
 				m_bLevelComplete = true;
+
+				// Award player with gold
+				m_pPlayer->DeductCash( -(100 * m_iLevel) );
 			}
 			else
 			{
@@ -470,7 +486,9 @@ bool CGameEngine::processUnbufferedKeyInput(const FrameEvent& evt)
 void CGameEngine::moveCamera()
 {
 	if ( m_bInCombatMode )
+	{
 		return;
+	}
 
 	// Make all the changes to the camera	
 	Vector3 pos = m_pCamera->getPosition();
@@ -558,39 +576,52 @@ void CGameEngine::moveCamera()
 	}
 
 	// Loop through monsters to check if we need to start combat
-	for ( int i = 0; i<m_pMonsters.size(); i++ )
+	if ( !m_bInCombatMode )
 	{
-		CMonster *pMonster = m_pMonsters[i];
-		if ( ((pMonster->getTileX() * 3) + 1) == clippedX && ((pMonster->getTileY() * 3) + 1) == clippedY )
+		for ( int i = 0; i<m_pMonsters.size(); i++ )
 		{
-			CCombatant *pActualMonster = m_pFactory->GetRandomMonster(m_iLevel);			
-			// Start combat!
-			m_vCameraPos = m_pCamera->getPosition();
-			m_bInCombatMode = true;
-			if ( pCombatMode )
+			CMonster *pMonster = m_pMonsters[i];
+			if ( ((pMonster->getTileX() * 3) + 1) == clippedX && ((pMonster->getTileY() * 3) + 1) == clippedY )
 			{
-				delete pCombatMode;
-				pCombatMode = NULL;
+				CCombatant *pActualMonster = m_pFactory->GetRandomMonster(m_iLevel);			
+				// Start combat!
+				m_vCameraPos = m_pCamera->getPosition();
+				m_bInCombatMode = true;
+
+				// Delete old combat mode object if it still exists
+				if ( pCombatMode )
+				{
+					delete pCombatMode;
+					pCombatMode = NULL;
+				}
+				m_pMonsters.erase( m_pMonsters.begin() + i );
+				pCombatMode = new CombatMode(m_pPlayer, pActualMonster, pMonster);	
+
+				CEGUI::Window *attackButton = m_pWindowManager->getWindow("AttackButton");
+				CEGUI::Window *fleeButton = m_pWindowManager->getWindow("FleeButton");
+
+				m_pAttackWindow = m_pWindowManager->getWindow("AttackMenu");
+				CEGUI::Window *hitButton = m_pWindowManager->getWindow("AttackButton1");
+				m_pThunderButton = m_pWindowManager->getWindow("AttackButton2");
+				m_pDoubleButton = m_pWindowManager->getWindow("AttackButton3");
+				CEGUI::Window *backButton = m_pWindowManager->getWindow("AttackButton4");
+
+				attackButton->removeAllEvents();
+				fleeButton->removeAllEvents();
+				hitButton->removeAllEvents();
+				m_pThunderButton->removeAllEvents();
+				m_pDoubleButton->removeAllEvents();
+				backButton->removeAllEvents();
+
+				attackButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Attack, pCombatMode));
+				fleeButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Flee, pCombatMode));
+				hitButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Hit, pCombatMode));
+				m_pThunderButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Thunder, pCombatMode));
+				m_pDoubleButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Double, pCombatMode));
+				backButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Back, pCombatMode));
+
+				break;
 			}
-			pCombatMode = new CombatMode(m_pPlayer, pActualMonster, pMonster);	
-			m_pMonsters.erase( m_pMonsters.begin() + i );
-
-			CEGUI::Window *attackButton = m_pWindowManager->getWindow("AttackButton");
-			CEGUI::Window *fleeButton = m_pWindowManager->getWindow("FleeButton");
-
-			m_pAttackWindow = m_pWindowManager->getWindow("AttackMenu");
-			CEGUI::Window *hitButton = m_pWindowManager->getWindow("AttackButton1");
-			m_pThunderButton = m_pWindowManager->getWindow("AttackButton2");
-			m_pDoubleButton = m_pWindowManager->getWindow("AttackButton3");
-			CEGUI::Window *backButton = m_pWindowManager->getWindow("AttackButton4");
-			attackButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Attack, pCombatMode));
-			fleeButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Flee, pCombatMode));
-
-			hitButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Hit, pCombatMode));
-			m_pThunderButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Thunder, pCombatMode));
-			m_pDoubleButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Double, pCombatMode));
-			backButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&CombatMode::Back, pCombatMode));
-
 		}
 	}
 
@@ -927,6 +958,8 @@ bool CGameEngine::AdventureMode( const CEGUI::EventArgs &e )
 
 	if ( m_iLevel != 0 )
 	{
+		m_pPlayer->RecoverHP();
+
 		NextLevel(e);
 		m_pHiddenCubes = m_pMapLoader->GetCubes();
 		m_pDiscoveredCubes.clear();
@@ -1332,17 +1365,27 @@ void CGameEngine::UpdateRageButtons()
 }
 
 void CGameEngine::ContinueGame(CCombatant *pActualMonster, CMonster *pMonster)
-{	
+{
+	if ( pActualMonster == NULL )
+	{
+		Ogre::LogManager::getSingleton().logMessage("Continue Game - Error on pActualMonster");
+		return;
+	}
+	if ( pMonster == NULL )
+	{
+		Ogre::LogManager::getSingleton().logMessage("Continue Game - Error on pMonster");
+		return;
+	}
+
 	m_bInCombatMode = false;
 	m_pCamera->setPosition(m_vCameraPos);
 	m_pCombatLight->setVisible(false);
 	SetGUIMode ( ADVENTURE );
 
-	// Delete Combatant and Monster objects.
-	delete pActualMonster;
+	// Remove monster entity from scene.
 	m_pPrimary->destroyEntity( pMonster->getEntity() );
 	m_pPrimary->getRootSceneNode()->removeChild(pMonster->getNode());
-	delete pMonster;	
+
 
 	if (m_pPlayer->GetCurHP() <= 0 )
 	{
@@ -1353,10 +1396,31 @@ void CGameEngine::ContinueGame(CCombatant *pActualMonster, CMonster *pMonster)
 		m_pMessageBoxText->setText("You have died! Game over!");
 		m_fMessageTime = 5;
 	}
+	else if ( pActualMonster->GetCurHP() <= 0 )
+	{
+		string result = "You have slain the monster!\nYour reward is: ";
+		if ( (rand()%100 + 1) > 50 )
+		{
+			CItem *pItem = m_pFactory->GetRandomItem(rand()%10, m_iLevel);
+			if ( m_pPlayer->AddItemToInventory( pItem ) )
+			{
+				result += pItem->GetName() + ", bonus: +" + itoa2(pItem->GetBonus()) + " " + pItem->GetBonusString();
+			}
+		}
+		else
+		{
+			int gold = (rand()%10 + 1) * (10 * m_iLevel);
+			m_pPlayer->DeductCash( -gold );
+			result += itoa2(gold) + " goldpieces!";
+		}
+		m_pMessageBox->setVisible( true );
+		m_pMessageBoxText->setText(result);
+		m_fMessageTime = 5;
+	}
 	else
 	{
 		m_pMessageBox->setVisible( true );
-		m_pMessageBoxText->setText("You have slain the monster!");
+		m_pMessageBoxText->setText("You have cowardly ran from battle!");
 		m_fMessageTime = 5;
 	}
 }
@@ -1370,4 +1434,3 @@ Vector3 CGameEngine::GetCameraDirection()
 {
 	return m_pCamera->getDirection();
 }
-

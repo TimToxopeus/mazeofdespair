@@ -13,7 +13,7 @@ CombatMode::CombatMode(CPlayer *pCPlayer, CCombatant *pCCombatant, CMonster *pMo
 	engine->SetGUIMode( BATTLEMODEMENU );
 	pMonster->getNode()->setPosition(engine->GetCameraPosition() + engine->GetCameraDirection() * 150 );
 	m_bPlayersTurn = true;
-	
+
 	AddStringToCombatLog( "Starting battle with " + pCCombatant->GetName() );
 }
 
@@ -24,6 +24,7 @@ CombatMode::~CombatMode()
 
 void CombatMode::AddStringToCombatLog(std::string pText)
 {
+	Ogre::LogManager::getSingleton().logMessage( pText );
 	m_sCombatText.push_back(pText);
 	if ( m_sCombatText.size() > 4 )
 	{
@@ -60,8 +61,15 @@ bool CombatMode::Flee( const CEGUI::EventArgs &e )
 		
 
 	// Continue game
-	CGameEngine::Instance()->ContinueGame(m_pCombatant, m_pMonster);
-	
+	if ( m_pCombatant != NULL && m_pMonster != NULL )
+	{
+		CGameEngine::Instance()->ContinueGame(m_pCombatant, m_pMonster);
+		delete m_pCombatant;
+		m_pCombatant = NULL;
+		delete m_pMonster;
+		m_pMonster = NULL;
+	}
+
 	return true;
 }
 
