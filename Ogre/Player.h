@@ -39,5 +39,5 @@ public:
 	int ThunderStrike(CCombatant *pCCombatant);
 	int DoubleSlash(CCombatant *pCCombatant);
 
-
+	void RecoverHP() { m_iCurHP = m_iMaxHP; }
 };
